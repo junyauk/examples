@@ -1,0 +1,8 @@
+#pragma once
+#ifndef SINGLETHREADEXECUTION_H_INCLUDED
+#define SINGLETHREADEXECUTION_H_INCLUDED
+
+int Run_SingleThreadExecution();
+
+
+#endif // SINGLETHREADEXECUTION_H_INCLUDED

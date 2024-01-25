@@ -1,0 +1,7 @@
+#pragma once
+#ifndef READLOCKWRITELOCK_H_INCLUDED
+#define READLOCKWRITELOCK_H_INCLUDED
+
+int Run_ReadLockWriteLock();
+
+#endif // READLOCKWRITELOCK_H_INCLUDED

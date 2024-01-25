@@ -1,0 +1,7 @@
+#pragma once
+#ifndef THREADPERMESSAGE_H_INCLUDED
+#define THREADPERMESSAGE_H_INCLUDED
+
+int Run_ThreadPerMessage();
+
+#endif // THREADPERMESSAGE_H_INCLUDED
