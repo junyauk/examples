@@ -30,8 +30,9 @@ namespace Example1
 	public:
 		void handle(const string& filePath, const string& contents)
 		{
+			auto id = std::this_thread::get_id();
 			lock_guard<mutex> lg(m_mutex);
-			cout << filePath << " : " << contents << endl;
+			cout << "TID: " << id << filePath << " : " << contents << endl;
 		}
 	private:
 		static mutex	m_mutex;
@@ -71,7 +72,7 @@ namespace Example1
 		host.request("path_b", "contents_b");
 		host.request("path_c", "contents_c");
 
-		sleep_for(seconds(1));
+		sleep_for(seconds(3));
 	}
 };
 
@@ -116,6 +117,12 @@ namespace Example2
 			return msg;
 		}
 
+		bool empty()
+		{
+			unique_lock<mutex> ul(m_mutex);
+			return m_queue.empty();
+		}
+
 	private:
 		queue<Message> m_queue;
 		mutex m_mutex;
@@ -131,7 +138,7 @@ namespace Example2
 	// A function that creates a new thread for each message in the queue and print it.
 	static void threadPerMessage(MessageQueue& mq)
 	{
-		while (1)
+		while (!mq.empty())
 		{
 			Message msg = mq.pop();
 			thread th(printMessage, msg); // For printing
@@ -151,6 +158,8 @@ namespace Example2
 		mq.push(Message(3, "Bye"));
 		threadPerMessage(mq);
 
+		sleep_for(seconds(3));
+
 		return;
 	}
 
@@ -158,8 +167,15 @@ namespace Example2
 
 int Run_ThreadPerMessage()
 {
-	Example1::Run_ThreadPerMessage();
-	Example2::Run_ThreadPerMessage();
+// Note:
+// After detach() was called, the threads might not be able to 
+// finish before finishing the main thread.
+// This means that the literal values like "Hellow" are not available
+// after the main thread finished.
+// Then unexpected behaviour would happen.
+// So do not run the following tests.
+//	Example1::Run_ThreadPerMessage();
+//	Example2::Run_ThreadPerMessage();
 
 	return 0;
 }

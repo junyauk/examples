@@ -158,6 +158,7 @@
     <ClInclude Include="..\includes\readlockwritelock.h" />
     <ClInclude Include="..\includes\singlethreadexecution.h" />
     <ClInclude Include="..\includes\threadpermessage.h" />
+    <ClInclude Include="..\includes\workerthread.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -179,6 +180,7 @@
     <ClCompile Include="readlockwritelock.cpp" />
     <ClCompile Include="singlethreadexecution.cpp" />
     <ClCompile Include="threadpermessage.cpp" />
+    <ClCompile Include="workerthread.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

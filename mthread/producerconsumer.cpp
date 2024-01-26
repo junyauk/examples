@@ -2,6 +2,7 @@
 #include "producerconsumer.h"
 
 #include <deque>
+#include <queue>
 #include <vector>
 #include <functional>
 #include <thread>
@@ -10,7 +11,7 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-
+#include <random>
 #include <chrono>
 #include <sstream>
 
@@ -19,6 +20,7 @@ using std::endl;
 
 
 using std::deque;
+using std::queue;
 using std::string;
 using std::vector;
 using std::stringstream;
@@ -32,7 +34,7 @@ using std::this_thread::sleep_for;
 using std::chrono::milliseconds;
 
 
-namespace ProducerConsumer
+namespace Example1
 {
 	template <typename T>
 	class Queue
@@ -207,27 +209,130 @@ namespace ProducerConsumer
 		c_v m_cv;
 		vector<thread> m_threads;
 	};
+
+	void Run_ProducerConsumer()
+	{
+		// This Printer class will create 5 threads at constructor
+		Printer printer(5, 10);
+
+		for (int i = 0; i < 50; i++)
+		{
+			// Create a string
+			stringstream ss;
+			ss << "hello world " << i;
+
+			// The created string is moved to the queue in the printer.
+			while (!printer.append(std::move(ss.str())))
+			{
+				sleep_for(milliseconds(1));
+			}
+		}
+	}
+
 };
 
-using namespace ProducerConsumer;
+namespace Example2
+{
+	using std::random_device;
+	using std::mt19937;
+	using std::uniform_int_distribution;
+	const int BUFFER_SIZE = 10;
+	queue<int> g_queue;
+	mutex	g_mutex;
+	c_v		g_cv;
+	bool	g_finish = false;
+
+	static void producer()
+	{
+		random_device rd;
+		mt19937	gen(rd());
+		uniform_int_distribution<> dis(1, 100);
+
+		while (1)
+		{
+			// generate a random item
+			int item = dis(gen);
+			// lock the mutex
+			{ // Critical Section ->
+				unique_lock<mutex> ul(g_mutex);
+				if (g_finish)
+				{
+					return;
+				}
+				// wait until the queue is not full
+				g_cv.wait(ul, [&] {return g_queue.size() < BUFFER_SIZE; });
+				// push the item to the queue
+				g_queue.push(item);
+				// unlock the mutex
+				ul.unlock();
+				// notify the consumer that an item is available
+				g_cv.notify_one();
+			} // Critical Section <-
+			// print the item
+			cout << "Producer produced " << item << endl;
+			// sleep for a random time
+			sleep_for(milliseconds(dis(gen)));
+		}
+	}
+
+	static void consumer()
+	{
+		random_device rd;
+		mt19937	gen(rd());
+		uniform_int_distribution<> dis(1, 100);
+
+		while (1)
+		{
+			int item = 0;
+			{ // Critical Section ->
+				// lock the mutex
+				unique_lock<mutex> ul(g_mutex);
+				if (g_finish)
+				{
+					return;
+				}
+				// wait until the queue is not empty
+				g_cv.wait(ul, [&] { return !g_queue.empty(); });
+				// pop an item from the queue
+				item = g_queue.front();
+				g_queue.pop();
+				// notify the producer that an item was consumed
+				g_cv.notify_one();
+			} // Critical Section <-
+			// print the item
+			cout << "Consumer consumed " << item << endl;
+			// sleep for a random time
+			sleep_for(milliseconds(dis(gen)));
+		}
+	}
+
+	static void Run_ProducerConsumer()
+	{
+		// create and start both Producer and Consumer threads
+		thread th_producer(producer);
+		thread th_consumer(consumer);
+
+		sleep_for(milliseconds(3000));
+
+		{
+			unique_lock<mutex> ul(g_mutex);
+			g_finish = true;
+			g_cv.notify_all();
+		}
+
+		// join threads
+		th_producer.join();
+		th_consumer.join();
+
+		return;
+	}
+};
+
 
 int Run_ProducerConsumer()
 {
-	// This Printer class will create 5 threads at constructor
-	Printer printer(5, 10);
-
-	for (int i = 0; i < 50; i++)
-	{
-		// Create a string
-		stringstream ss;
-		ss << "hello world " << i;
-
-		// The created string is moved to the queue in the printer.
-		while (!printer.append(std::move(ss.str())))
-		{
-			sleep_for(milliseconds(1));
-		}
-	}
+	Example1::Run_ProducerConsumer();
+	Example2::Run_ProducerConsumer();
 
 	return 0;
 }

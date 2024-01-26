@@ -19,30 +19,25 @@ using c_v = std::condition_variable;
 // For example, if an object reads files and a calling method 
 // invokes a get method on the object when the ZIP file is not open, 
 // the object would “balk” at the request 
-
 // This design pattern is useful if letting threads work with only a particular condition.
-// Open: Only works if m_isOpen is false.
-// Read: Only works if m_isOpen is true.
-// Write: Only works if m_isOoen is true, and will wait for file until it's got true.
-// Read: Only works if m_isOpen is true, and will wait for file until it's got true.
 
 class File
 {
 public:
 	File()
-		: m_isOpen(false)
+		: m_stage(ST_READY_TO_OPEN)
 		, m_content("")
 	{}
 
 	void open()
 	{
 		unique_lock<mutex> ul(m_mutex);
-		if (m_isOpen)
+		if (m_stage != ST_READY_TO_OPEN)
 		{
 			cout << "File is already open" << endl;
 			return;
 		}
-		m_isOpen = true;
+		m_stage = ST_READY_TO_WRITE;
 		m_content = "Hello World!";
 		cout << "File was opened" << endl;
 		m_cv.notify_all();
@@ -51,12 +46,18 @@ public:
 	void close()
 	{
 		unique_lock<mutex> ul(m_mutex);
-		if (!m_isOpen)
+		if (m_stage > ST_READY_TO_CLOSE)
 		{
 			cout << "File is already closed" << endl;
 			return;
 		}
-		m_isOpen = false;
+		while (m_stage < ST_READY_TO_CLOSE)
+		{
+			cout << "Waiting for file was read" << endl;
+			m_cv.wait(ul);
+		}
+
+		m_stage = ST_READY_TO_FINISH;
 		m_content = "";
 		cout << "File was closed" << endl;
 		m_cv.notify_all();
@@ -65,45 +66,58 @@ public:
 	void read()
 	{
 		unique_lock<mutex> ul(m_mutex);
-		while (!m_isOpen)
+		while (m_stage < ST_READY_TO_READ)
 		{
 			cout << "Waiting for file to open" << endl;
 			m_cv.wait(ul);
 		}
+		m_stage = ST_READY_TO_CLOSE;
 		cout << "Reading file: " << m_content << endl;
+		m_cv.notify_all();
 	}
 
 	void write( const string & newContent)
 	{
 		unique_lock<mutex> ul(m_mutex);
-		while (!m_isOpen)
+		while (m_stage < ST_READY_TO_WRITE)
 		{
 			cout << "Waiting for file to open" << endl;
 			m_cv.wait(ul);
 		}
+		m_stage = ST_READY_TO_READ;
 		m_content = newContent;
 		cout << "Writing file: " << m_content << endl;
+		m_cv.notify_all();
 	}
 
 private:
+	enum stage
+	{
+		ST_READY_TO_OPEN = 0,
+		ST_READY_TO_WRITE,
+		ST_READY_TO_READ,
+		ST_READY_TO_CLOSE,
+		ST_READY_TO_FINISH
+	};
+
 	mutex m_mutex;
 	c_v m_cv;	// This is used for letting threads know the status that file is open/close.
-	bool m_isOpen;
+	stage m_stage;
 	string m_content;
 };
 
 int Run_Balking()
 {
 	File f;
+	thread	th_close(&File::close, &f);
 	thread	th_read(&File::read, &f);
 	thread	th_write(&File::write, &f, "Hello C++!");
 	thread	th_open(&File::open, &f);
-	thread	th_close(&File::close, &f);
 
+	th_close.join();
+	th_open.join();
 	th_read.join();
 	th_write.join();
-	th_open.join();
-	th_close.join();
 
 	return 0;
 }
