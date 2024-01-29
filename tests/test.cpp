@@ -10,6 +10,7 @@
 #include "readlockwritelock.h"
 #include "threadpermessage.h"
 #include "workerthread.h"
+#include "twophasetermination.h"
 
 
 TEST(MultiThread, Basic)
@@ -67,3 +68,7 @@ TEST(MultiThread, WorkerThread)
 	EXPECT_NO_THROW(Run_WorkerThread());
 }
 
+TEST(MultiThread, TwoPhaseTermination)
+{
+	EXPECT_NO_THROW(Run_TwoPhaseTermination());
+}
