@@ -9,6 +9,7 @@
 #include "producerconsumer.h"
 #include "readlockwritelock.h"
 #include "threadpermessage.h"
+#include "workerthread.h"
 
 
 TEST(MultiThread, Basic)
@@ -59,5 +60,10 @@ TEST(MultiThread, ReadLockWriteLock)
 TEST(MultiThread, ThreadPerMessage)
 {
 	EXPECT_NO_THROW(Run_ThreadPerMessage());
+}
+
+TEST(MultiThread, WorkerThread)
+{
+	EXPECT_NO_THROW(Run_WorkerThread());
 }
 
