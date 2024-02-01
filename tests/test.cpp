@@ -1,17 +1,27 @@
 #include "pch.h"
+#include "activeobject.h"
 #include "basic.h"
 #include "balking.h"
 #include "multithreadsum.h"
 #include "singlethreadexecution.h"
-#include "guardedsuspention.h"
+#include "guardedsuspension.h"
 #include "conditionvariableexample.h"
 #include "futurepromise.h"
 #include "producerconsumer.h"
 #include "readlockwritelock.h"
 #include "threadpermessage.h"
-#include "workerthread.h"
+#include "threadspecificstorage.h"
 #include "twophasetermination.h"
+#include "workerthread.h"
+#include "doublecheckedlocking.h"
+#include "halfsynchalfasync.h"
 
+
+// Note:
+// test functions running here are only example.
+// They should be called with various conditions originally.
+// ButI'm intentionally not implement them.
+// Writing test functions with various conditinos is not my purpose here.
 
 TEST(MultiThread, Basic)
 {
@@ -33,9 +43,9 @@ TEST(MultiThread, SingleThreadExecution)
 	EXPECT_NO_THROW(Run_SingleThreadExecution());
 }
 
-TEST(MultiThread, GuardedSuspention)
+TEST(MultiThread, GuardedSuspension)
 {
-	EXPECT_NO_THROW(Run_GuardedSuspention());
+	EXPECT_NO_THROW(Run_GuardedSuspension());
 }
 
 TEST(MultiThread, ConditionVariableExample)
@@ -71,4 +81,24 @@ TEST(MultiThread, WorkerThread)
 TEST(MultiThread, TwoPhaseTermination)
 {
 	EXPECT_NO_THROW(Run_TwoPhaseTermination());
+}
+
+TEST(MultiThread, ThreadSpecificStorage)
+{
+	EXPECT_NO_THROW(Run_ThreadSpecificStorage());
+}
+
+TEST(MultiThread, ActiveObject)
+{
+	EXPECT_NO_THROW(Run_ActiveObject());
+}
+
+TEST(MultiThread, DoubleCheckedLocking)
+{
+	EXPECT_NO_THROW(Run_DoubleCheckedLocking());
+}
+
+TEST(MultiThread, HalfSyncHalfAsync)
+{
+	EXPECT_NO_THROW(Run_HalfSyncHalfAsync());
 }

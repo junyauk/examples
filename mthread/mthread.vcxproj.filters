@@ -30,9 +30,6 @@
     <ClInclude Include="..\includes\immutable.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\guardedsuspention.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\includes\conditionvariableexample.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -60,6 +57,21 @@
     <ClInclude Include="..\includes\twophasetermination.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\threadspecificstorage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\activeobject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\doublecheckedlocking.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\guardedsuspension.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\halfsynchalfasync.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="multithreadsum.cpp">
@@ -72,9 +84,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="immutable.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="guardedsuspention.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="conditionvariableexample.cpp">
@@ -102,6 +111,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="twophasetermination.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="activeobject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="doublecheckedlocking.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="threadspecificstorage.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="guardedsuspension.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="halfsynchalfasync.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

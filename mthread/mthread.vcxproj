@@ -119,6 +119,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -137,6 +138,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -147,28 +149,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\includes\activeobject.h" />
     <ClInclude Include="..\includes\balking.h" />
     <ClInclude Include="..\includes\basic.h" />
     <ClInclude Include="..\includes\conditionvariableexample.h" />
+    <ClInclude Include="..\includes\doublecheckedlocking.h" />
     <ClInclude Include="..\includes\futurepromise.h" />
-    <ClInclude Include="..\includes\guardedsuspention.h" />
+    <ClInclude Include="..\includes\guardedsuspension.h" />
+    <ClInclude Include="..\includes\halfsynchalfasync.h" />
     <ClInclude Include="..\includes\immutable.h" />
     <ClInclude Include="..\includes\multithreadsum.h" />
     <ClInclude Include="..\includes\producerconsumer.h" />
     <ClInclude Include="..\includes\readlockwritelock.h" />
     <ClInclude Include="..\includes\singlethreadexecution.h" />
     <ClInclude Include="..\includes\threadpermessage.h" />
+    <ClInclude Include="..\includes\threadspecificstorage.h" />
     <ClInclude Include="..\includes\twophasetermination.h" />
     <ClInclude Include="..\includes\workerthread.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="activeobject.cpp" />
     <ClCompile Include="balking.cpp" />
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="conditionvariableexample.cpp" />
+    <ClCompile Include="doublecheckedlocking.cpp" />
     <ClCompile Include="futurepromise.cpp" />
-    <ClCompile Include="guardedsuspention.cpp" />
+    <ClCompile Include="guardedsuspension.cpp" />
+    <ClCompile Include="halfsynchalfasync.cpp" />
     <ClCompile Include="immutable.cpp" />
     <ClCompile Include="multithreadsum.cpp" />
     <ClCompile Include="pch.cpp">
@@ -181,6 +190,7 @@
     <ClCompile Include="readlockwritelock.cpp" />
     <ClCompile Include="singlethreadexecution.cpp" />
     <ClCompile Include="threadpermessage.cpp" />
+    <ClCompile Include="threadspecificstorage.cpp" />
     <ClCompile Include="twophasetermination.cpp" />
     <ClCompile Include="workerthread.cpp" />
   </ItemGroup>
