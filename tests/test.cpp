@@ -1,4 +1,7 @@
 #include "pch.h"
+
+#include "typeerasure.h"
+
 #include "activeobject.h"
 #include "basic.h"
 #include "balking.h"
@@ -22,6 +25,19 @@
 // They should be called with various conditions originally.
 // ButI'm intentionally not implement them.
 // Writing test functions with various conditinos is not my purpose here.
+
+TEST(General, TypeErasure)
+{
+	std::cout << "*** General ****************************" << std::endl;
+
+	EXPECT_NO_THROW(Run_TypeErasureStep1());
+	EXPECT_NO_THROW(Run_TypeErasureStep2());
+	EXPECT_NO_THROW(Run_TypeErasureStep3());
+	EXPECT_NO_THROW(Run_TypeErasureStep4());
+	EXPECT_NO_THROW(Run_TypeErasureStep5());
+	EXPECT_NO_THROW(Run_TypeErasureStep6());
+}
+
 
 TEST(MultiThread, Basic)
 {
@@ -102,3 +118,4 @@ TEST(MultiThread, HalfSyncHalfAsync)
 {
 	EXPECT_NO_THROW(Run_HalfSyncHalfAsync());
 }
+

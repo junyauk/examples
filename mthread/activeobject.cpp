@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 #include <memory>
 #include <thread>
 #include <queue>
@@ -15,6 +17,8 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::stringstream;
+using std::vector;
 using std::shared_ptr;
 using std::make_shared;
 using std::thread;
@@ -30,6 +34,14 @@ using std::promise;
 using std::this_thread::sleep_for;
 using std::chrono::seconds;
 using std::chrono::milliseconds;
+
+// About Active OBject design pattern
+// Active Object class has got a queue of messages (or tasks).
+// The class will start a single thread at constructor,
+// and the thread runs until destructor.
+// The thread will process messages (or tasks) in the queue.
+// The class should have a method for adding a message (or task).
+
 
 namespace Example1
 {
@@ -229,14 +241,102 @@ namespace Example2
 
 		return 0;
 	}
-}
+} // Example2
 
+namespace Example3
+{
+	class ActiveObject
+	{
+	public:
+		ActiveObject()
+			: m_stop(false)
+			, m_thread(thread(&ActiveObject::run, this)) // Start a single thread
+		{}
+		~ActiveObject()
+		{
+			{
+				unique_lock<mutex>	ul(m_mutex);
+				m_stop = true;
+				m_cv.notify_all();
+			}
+			m_thread.join();
+		}
+		void enqueue(function<void()> func)
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_queue.push(func);
+			m_cv.notify_all();
+		}
+	private:
+		void run()
+		{
+			// This thread works as scheduler
+			// a thread should have an infinite loop
+			while (true)
+			{
+				function<void()>	func;
+				{
+					// 1. lock
+					unique_lock<mutex>	ul(m_mutex);
+					// 2. wait for a message is queued or termination
+					m_cv.wait(ul, [this]() {return !m_queue.empty() || m_stop; });
+					if (m_stop)
+					{
+						break; // terminated
+					}
+					// 3. get the message (or task)
+					func = m_queue.front();
+					m_queue.pop();
+				}
+				// 4. run the message (or task)
+				func();
+			}
+		}
 
+		queue<function<void()>> m_queue;
+		mutex m_mutex;	// Only one thread runs
+		c_v	m_cv;		// waiting for something is queued
+		bool m_stop;	// a flag for terminating
+		thread	m_thread;
+	};
+
+	void Message(int id, string &message, promise<string> &prom)
+	{
+		stringstream ss;
+		ss << "Message ID:" << id << ", [" << message << "]\n";
+		prom.set_value(ss.str());
+	}
+
+	void Run_ActiveObject()
+	{
+		// This example of Active Object uses promise and future classes
+		// The thread run by Active Object will set results to the promises
+		// After all messages have processed, 
+		// the main thread can retrieve the results stored in the promise.
+		ActiveObject	ao;
+		vector<string>	str = { "Beef", "Pork", "Chicken", "Fish" };
+		vector<promise<string>>	promises(4);
+
+		for (int i = 0; i < 4; i++)
+		{
+			ao.enqueue(std::bind(Message, i, str[i], std::ref(promises[i])));
+		}
+
+		// get the results
+		for (auto& p : promises)
+		{
+			future	f = p.get_future();
+			cout << f.get();
+		}
+
+		return;
+	}
+} // Example3
 
 int Run_ActiveObject()
 {
 //	Example1::Run_ActiveObject();
-	Example2::Run_ActiveObject();
-
+//	Example2::Run_ActiveObject();
+	Example3::Run_ActiveObject();
 	return 0;
 }

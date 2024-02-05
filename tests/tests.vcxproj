@@ -118,6 +118,9 @@
     <ProjectReference Include="..\examples.vcxproj">
       <Project>{ac08e256-c784-46dc-a061-567ba5d5a2aa}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\general\general.vcxproj">
+      <Project>{f00b2121-a420-4210-aefa-0d21ee45391d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\mthread\mthread.vcxproj">
       <Project>{3d139cf0-0dd9-473a-ae20-c6fec197f6ad}</Project>
     </ProjectReference>
