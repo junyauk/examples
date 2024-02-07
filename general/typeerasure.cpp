@@ -483,6 +483,202 @@ namespace TypeErasureStep6 // Simplified and class separated example for typical
 	}
 } // TypeErasureStep6
 
+namespace TypeErasureExercise1
+{
+	struct Something
+	{
+		int m_value;
+		string m_str;
+	};
+
+	class Base
+	{
+	public:
+		// needs to have ...
+		//  1. the virtual destructor
+		//  2. the method which can process using Something
+		virtual ~Base() = default;
+		virtual auto run(const Something &obj) -> Something = 0;
+	};
+
+	template<class T>
+	class Derived : public Base
+	{
+	public:
+		Derived(T t)
+			: m_t(t)
+		{}
+		~Derived()
+		{
+			cout << "Derived's destructor\n";
+		}
+		auto run(const Something& obj) -> Something override
+		{
+			return m_t(obj);
+		}
+	private:
+		// needs to have an instance of the original class
+		T	m_t;
+	};
+
+	class Function
+	{
+	public:
+		template<class T>
+		Function(T t)
+			: m_pBase(make_unique < Derived<T>>(t)) {}
+		auto operator()(const Something& obj) -> Something
+		{
+			return m_pBase->run(obj);
+		}
+	private:
+		unique_ptr<Base> m_pBase;
+	};
+
+	Something func(const Something& obj)
+	{
+		return { obj.m_value + 1, "called from function"};
+	}
+
+	class functor
+	{
+	public:
+		auto operator()(const Something& obj) -> Something
+		{
+			return { obj.m_value + 1, "called from operator"};
+		}
+	};
+
+	auto lambda = [](const Something& obj) -> Something
+		{
+			return { obj.m_value + 1, "called from lambda"};
+		};
+
+	auto test() -> void
+	{
+		stringstream ss;
+		{
+			Function f{ func };
+			Something obj{ 10, "the original value is 10" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with function(" << result << ")" << endl;
+		}
+
+		{
+			Function f{ functor{} };
+			Something obj{ 20, "the original value is 20" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with class(" << result << ")" << endl;
+		}
+
+		{
+			Function f{ lambda };
+			Something obj{ 30, "the original value is 30" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with lambda(" << result << ")" << endl;
+		}
+
+		cout << ss.str();
+	}
+} // TypeErasureExercise1
+
+namespace TypeErasureExercise2
+{
+	struct Something
+	{
+		int m_value;
+		string m_str;
+	};
+
+	class Function
+	{
+	public:
+		template<class T>
+		Function(T t)
+			: m_pBase(make_unique<Derived<T>>(t)) {}
+		auto operator()(const Something& obj) -> Something
+		{
+			return m_pBase->run(obj);
+		}
+	private:
+		class Base
+		{
+		public:
+			virtual ~Base() = default;
+			virtual Something run(const Something& obj) = 0;
+		};
+
+		template<class T>
+		class Derived : public Base
+		{
+		public:
+			Derived(T t) : m_t(t) {}
+			Something run(const Something& obj) override
+			{
+				return m_t(obj);
+			}
+		private:
+			T	m_t;
+		};
+
+		unique_ptr<Base>	m_pBase;
+	};
+
+	Something func(const Something& obj)
+	{
+		return { obj.m_value + 1, "called from function" };
+	}
+
+	class functor
+	{
+	public:
+		auto operator()(const Something& obj) -> Something
+		{
+			return { obj.m_value + 1, "called from operator" };
+		}
+	};
+
+	auto lambda = [](const Something& obj) -> Something
+		{
+			return { obj.m_value + 1, "called from lambda" };
+		};
+
+
+	auto test() -> void
+	{
+		stringstream ss;
+		{
+			Function f{ func };
+			Something obj{ 10, "the original value is 10" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with function(" << result << ")" << endl;
+		}
+
+		{
+			Function f{ functor{} };
+			Something obj{ 20, "the original value is 20" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with class(" << result << ")" << endl;
+		}
+
+		{
+			Function f{ lambda };
+			Something obj{ 30, "the original value is 30" };
+			Something ret = f(obj);
+			auto result = "Value: " + std::to_string(ret.m_value) + ", str: " + ret.m_str;
+			ss << "Exercise1 TypeErasure running with lambda(" << result << ")" << endl;
+		}
+
+		cout << ss.str();
+	}
+
+}
+
 int Run_TypeErasureStep1()
 {
 	cout << "** Run_TypeErasureStep1" << endl;
@@ -527,6 +723,14 @@ int Run_TypeErasureStep6()
 {
 	cout << "** Run_TypeErasureStep6" << endl;
 	TypeErasureStep6::test();
+	cout << endl;
+	return 0;
+}
+
+int Run_TypeErasureExercise1()
+{
+	cout << "** Run_TypeErasureExercise2" << endl;
+	TypeErasureExercise2::test();
 	cout << endl;
 	return 0;
 }

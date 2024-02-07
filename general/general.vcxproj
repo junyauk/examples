@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\includes\templates.h" />
     <ClInclude Include="..\includes\typeerasure.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
