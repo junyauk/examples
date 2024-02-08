@@ -1,11 +1,17 @@
 #include "pch.h"
 
+#include <string>
+#include <map>
+#include <functional>
+
 #include "templates.h"
 #include "typeerasure.h"
 
 using std::cout;
 using std::endl;
 using std::string;
+using std::map;
+using std::function;
 
 TEST(General, IsSame)
 {
@@ -16,21 +22,52 @@ TEST(General, IsSame)
 	cout << isSame<unsigned int, unsigned long>::value << endl;
 	cout << isSame<std::string, std::wstring>::value << endl;
 }
-TEST(General, TemplatesBasics)
-{
-	using namespace TemplateExamples::MyArray;
-	MyArray<int, 10> myarray;
 
-	auto reset = [&]() {
+using namespace TemplateExamples::MyArray;
+
+class MyArrayTests : public ::testing::Test
+{
+public:
+	void reset()
+	{
 		for (auto i = 0; i < 10; i++)
 		{
 			// operator[] of MyArray
 			myarray[i] = i;
 		}
-		};
+	}
 
-	// Initialize
-	reset();
+	void rangeExceptionTest(function<void()> const &func, const string &expectedMessage)
+	{
+		EXPECT_THROW(func(), std::out_of_range);
+		try { func(); }
+		catch (std::out_of_range& o)
+		{
+			EXPECT_STREQ(o.what(), expectedMessage.c_str());
+		}
+		catch (...)
+		{
+			ADD_FAILURE() << "unexpected exception";
+		}
+	}
+
+protected:
+	MyArray<int, 10> myarray;
+
+	virtual void SetUp()
+	{
+		cout << "SetUp\n";
+		reset();
+	}
+	virtual void TearDown()
+	{
+
+	}
+};
+
+TEST_F(MyArrayTests, MyArrayBasicTests)
+{
+	// []
 	int ret = myarray[6];
 	EXPECT_EQ(ret, 6);
 
@@ -45,10 +82,10 @@ TEST(General, TemplatesBasics)
 	{
 		EXPECT_EQ(myarray[i], 4);
 	}
-	reset();
+}
 
-	// -- iterator tests ---------------------------
-
+TEST_F(MyArrayTests, MyArrayIteratorTests)
+{
 	{	// begin(), end() and operator++ and operator++(int)
 		auto itr = myarray.begin();
 		// operator[] and operator*
@@ -121,146 +158,39 @@ TEST(General, TemplatesBasics)
 	}
 }
 
-TEST(General, TemplatesExceptions)
+TEST_F(MyArrayTests, MyArrayIteratorExceptionTests)
 {
-	using namespace TemplateExamples::MyArray;
-	MyArray<int, 10> myarray;
-
-	auto reset = [&]() {
-		for (auto i = 0; i < 10; i++)
-		{
-			// operator[] of MyArray
-			myarray[i] = i;
-		}
-		};
-	reset();
-
 	// exception check
 	auto b = myarray.begin();
 	auto e = myarray.end();
+	map<string, string>	expectedMessage
+	{
+		{"dereference", "cannot dereference out of range array iterator"},
+		{"increment",   "cannot increment array iterator past end"},
+		{"decrement",   "cannot decrement array iterator before begin"}
+	};
 
 	{	// [] and *
-		EXPECT_THROW(auto itr = b[-1], std::out_of_range);
-		try { auto itr = b[-1]; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot dereference out of range array iterator");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-
-		EXPECT_THROW(auto itr = e[0], std::out_of_range);
-		try { auto itr = e[0]; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot dereference out of range array iterator");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-		EXPECT_THROW(auto val = *e, std::out_of_range);
-		try { auto val = *e; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot dereference out of range array iterator");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
+		rangeExceptionTest([&] { auto itr = b[-1];}, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto itr = e[0];}, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto val = *e; }, expectedMessage["dereference"]);
 	}
 
 	{	// ++ and --
-		EXPECT_THROW(e++, std::out_of_range);
-		try { e++; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot increment array iterator past end");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-		EXPECT_THROW(b--, std::out_of_range);
-		try { b--; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot decrement array iterator before begin");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
+		rangeExceptionTest([&] { e++; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { b--; }, expectedMessage["decrement"]);
 	}
 
 	{	// += and -=
-		EXPECT_THROW(e += 1, std::out_of_range);
-		try { e += 1; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot increment array iterator past end");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-		EXPECT_THROW(b -= 1, std::out_of_range);
-		try { b -= 1; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot decrement array iterator before begin");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
+		rangeExceptionTest([&] { e += 1; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { b -= 1; }, expectedMessage["decrement"]);
 	}
 
 	{	// + and -
-		EXPECT_THROW(auto itr = e + 1, std::out_of_range);
-		try { auto itr = e + 1; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot increment array iterator past end");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-		EXPECT_THROW(auto itr = b - 1, std::out_of_range);
-		try { auto itr = b - 1; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot decrement array iterator before begin");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-
-		EXPECT_THROW(auto itr = b + 10, std::out_of_range);
-		try { auto itr = b + 10; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot increment array iterator past end");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
-		EXPECT_THROW(auto itr = e - 11, std::out_of_range);
-		try { auto itr = e - 11; }
-		catch (std::out_of_range& o)
-		{
-			EXPECT_STREQ(o.what(), "cannot decrement array iterator before begin");
-		}
-		catch (...)
-		{
-			ADD_FAILURE() << "unexpected exception";
-		}
+		rangeExceptionTest([&] { auto itr = e + 1; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { auto itr = b - 1; }, expectedMessage["decrement"]);
+		rangeExceptionTest([&] { auto itr = b + 10; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { auto itr = e - 11; }, expectedMessage["decrement"]);
 	}
 }
 

@@ -69,21 +69,10 @@ namespace TemplateExamples::MyArray
 
 		Array::reference operator*()
 		{
-#if 0
-			if (m_i < 0)
-			{
-				throw std::out_of_range("cannot decrement array iterator before begin");
-			}
-			else if ((m_i < 0) || (m_i >= m_maxSize))
-			{
-				throw std::out_of_range("cannot increment array iterator past end");
-			}
-#else
 			if ((m_i < 0) || (m_i >= m_maxSize))
 			{
 				throw std::out_of_range("cannot dereference out of range array iterator");
 			}
-#endif
 			return m_a[m_i];
 		}
 
@@ -294,9 +283,6 @@ namespace TemplateExamples::MyArray
 		}
 		std::cout << std::endl;
 	}
-
-
-
 }
 
 
