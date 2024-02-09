@@ -55,9 +55,6 @@ protected:
 			ADD_FAILURE() << "unexpected exception";
 		}
 	}
-
-
-
 };
 
 TEST_F(MyArrayTests, MyArrayBasicTests)
@@ -78,6 +75,7 @@ TEST_F(MyArrayTests, MyArrayBasicTests)
 	{
 		EXPECT_EQ(myarray[i], 4);
 	}
+
 }
 
 #if 1
@@ -224,6 +222,25 @@ TEST_F(MyArrayTests, MyArrayConstIteratorTests)
 		EXPECT_FALSE((b + 3) >= m);
 		EXPECT_TRUE((b + 7) > m);
 		EXPECT_FALSE((b + 7) <= m);
+	}
+}
+#endif
+
+#if 1
+TEST_F(MyArrayTests, MyArrayOutOfRangeTests)
+{
+	// our of range check
+	map<string, string>	expectedMessage
+	{
+		{"dereference", "cannot dereference out of range array iterator"},
+		{"increment",   "cannot increment array iterator past end"},
+		{"decrement",   "cannot decrement array iterator before begin"}
+	};
+
+	{	// [] and *
+		rangeExceptionTest([&] { auto ret = myarray[-1]; }, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto ret = myarray[10]; }, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto ret = myarray[SIZE_MAX]; }, expectedMessage["dereference"]);
 	}
 }
 #endif

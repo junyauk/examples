@@ -31,14 +31,14 @@ namespace TemplateExamples::MyArray
 	public:
 		using iterator = array_iterator;
 
-		array_iterator(Array&a, std::size_t i)
+		array_iterator(Array&a, std::size_t const& i)
 			: m_a(a)
 			, m_i(i)
 			, m_maxSize(m_a.size())
 		{}
 
 		// * and [] returning reference of the actual element
-		Array::reference operator*()
+		Array::reference operator*() const
 		{
 			if ((m_i < 0) || (m_i >= m_maxSize))
 			{
@@ -46,7 +46,7 @@ namespace TemplateExamples::MyArray
 			}
 			return m_a[m_i];
 		}
-		typename Array::reference operator[](std::size_t i) const
+		Array::reference operator[](std::size_t const &i) const
 		{
 			auto index = static_cast<signed long long>(m_i + i);
 			if ((index < 0) || (index >= static_cast<signed long long>(m_maxSize)))
@@ -91,7 +91,7 @@ namespace TemplateExamples::MyArray
 		}
 
 		// += and -= returning reference
-		array_iterator &operator+=(std::size_t n)
+		array_iterator &operator+=(std::size_t const &n)
 		{
 			auto index = static_cast<signed long long>(m_i + n);
 			if (index >= static_cast<signed long long>(m_maxSize))
@@ -105,7 +105,7 @@ namespace TemplateExamples::MyArray
 			m_i += n;
 			return *this;
 		}
-		array_iterator& operator-=(std::size_t n)
+		array_iterator& operator-=(std::size_t const &n)
 		{
 			if (static_cast<signed long long>(m_i - n) < 0)
 			{
@@ -116,13 +116,13 @@ namespace TemplateExamples::MyArray
 		}
 
 		// + and - returning copy
-		array_iterator operator+(std::size_t n) const
+		array_iterator operator+(std::size_t const& n) const
 		{
 			array_iterator copy = *this;
 			copy += n;
 			return copy;
 		}
-		array_iterator operator-(std::size_t n) const
+		array_iterator operator-(std::size_t const& n) const
 		{
 			array_iterator copy = *this;
 			copy -= n;
@@ -130,12 +130,12 @@ namespace TemplateExamples::MyArray
 		}
 
 		// ==, !=, <=, >=, < and > returing bool
-		bool operator==(const array_iterator& right) { return m_i == right.m_i; }
-		bool operator!=(const array_iterator& right) { return m_i != right.m_i; }
-		bool operator<(array_iterator const & right) const { return m_i < right.m_i; }
-		bool operator>(array_iterator const & right) const { return m_i > right.m_i; }
+		bool operator==(array_iterator const& right) { return m_i == right.m_i; }
+		bool operator!=(array_iterator const& right) { return m_i != right.m_i; }
+		bool operator<(array_iterator const& right) const { return m_i < right.m_i; }
+		bool operator>(array_iterator const& right) const { return m_i > right.m_i; }
 		bool operator<=(array_iterator const& right) const { return m_i <= right.m_i; }
-		bool operator>=(array_iterator const & right) const { return m_i >= right.m_i; }
+		bool operator>=(array_iterator const& right) const { return m_i >= right.m_i; }
 
 	private:
 		Array& m_a;
@@ -149,7 +149,7 @@ namespace TemplateExamples::MyArray
 	public:
 
 		// normal constructor
-		array_const_iterator(Array const& a, std::size_t i)
+		array_const_iterator(Array const& a, std::size_t const& i)
 			: m_a(a)
 			, m_i(i)
 			, m_maxSize(a.size())
@@ -245,12 +245,12 @@ namespace TemplateExamples::MyArray
 			return copy;
 		}
 		// ==, !=, >=, <=, >, < returning bool
-		bool operator==(array_const_iterator& right) const { return m_i == right.m_i; }
-		bool operator!=(array_const_iterator& right) const { return m_i != right.m_i; }
-		bool operator>(array_const_iterator& right) const { return m_i > right.m_i;  }
-		bool operator>=(array_const_iterator& right) const { return m_i >= right.m_i; }
-		bool operator<(array_const_iterator& right) const { return m_i < right.m_i; }
-		bool operator<=(array_const_iterator& right)const { return m_i <= right.m_i; }
+		bool operator==(array_const_iterator const& right) const { return m_i == right.m_i; }
+		bool operator!=(array_const_iterator const& right) const { return m_i != right.m_i; }
+		bool operator>(array_const_iterator const& right) const { return m_i > right.m_i;  }
+		bool operator>=(array_const_iterator const& right) const { return m_i >= right.m_i; }
+		bool operator<(array_const_iterator const& right) const { return m_i < right.m_i; }
+		bool operator<=(array_const_iterator const& right)const { return m_i <= right.m_i; }
 
 	private:
 		Array const& m_a;
@@ -269,19 +269,37 @@ namespace TemplateExamples::MyArray
 		using iterator = array_iterator<MyArray>;
 		using const_iterator = array_const_iterator<MyArray>;
 
-		reference operator[](std::size_t i) { return m_storage[i]; }
-		const_reference operator[](std::size_t i) const { return m_storage[i]; }
+		// [] returing reference
+		reference operator[](size_type const& i)
+		{
+			if ((static_cast<signed long long>(i) < 0) ||
+				(static_cast<signed long long>(i) >= N))
+			{
+				throw std::out_of_range("cannot dereference out of range array iterator");
+			}
+			return m_buf[i];
+		}
+		// [] (const version)
+		const_reference operator[](size_type const& i) const
+		{
+			if ((static_cast<signed long long>(i) < 0) ||
+				(static_cast<signed long long>(i) >= N))
+			{
+				throw std::out_of_range("cannot dereference out of range array iterator");
+			}
+			return m_buf[i];
+		}
 
 		size_type size() const { return N; }
 
-		reference front() { return m_storage[0]; }
-		reference back() { return m_storage[N - 1]; }
+		reference front() { return m_buf[0]; }
+		reference back() { return m_buf[N - 1]; }
 		iterator begin() { return iterator(*this, 0); }
 		iterator end() { return iterator(*this, N); }
 
 		// const version
-		const_reference front() const  { return m_storage[0]; }
-		const_reference back() const { return m_storage[N - 1]; }
+		const_reference front() const  { return m_buf[0]; }
+		const_reference back() const { return m_buf[N - 1]; }
 		const_iterator cbegin() const { return const_iterator(*this, 0); }
 		const_iterator cend() const { return const_iterator(*this, N); }
 
@@ -289,11 +307,11 @@ namespace TemplateExamples::MyArray
 		{
 			for (auto i = 0; i < N; i++)
 			{
-				m_storage[i] = u;
+				m_buf[i] = u;
 			}
 		}
 	private:
-		value_type m_storage[N];
+		value_type m_buf[N];
 	};
 
 	template<typename Container>
@@ -307,187 +325,6 @@ namespace TemplateExamples::MyArray
 	}
 }
 #else
-namespace TemplateExamples::MyArray
-{
-	template<typename Array>
-	class array_iterator
-	{
-	public:
-		using iterator = array_iterator;
-		array_iterator(Array& a, std::size_t const& i)
-			: m_a(a)
-			, m_i(i)
-			, m_maxSize(a.size())
-		{}
-
-		// * and [] returning reference of the actual element
-		Array::reference operator*() { return m_a[m_i]; }
-		Array::reference operator[](std::size_t const& i) { return m_a[m_i + i]; }
-
-		// ++ and -- returning reference
-		array_iterator& operator++() { m_i++; return *this; }
-		array_iterator& operator--() { m_i--; return *this; }
-		// ++(int) and --(int) returning copy
-		array_iterator operator++(int)
-		{
-			array_iterator copy = *this;
-			++*this;
-			return copy;
-		}
-		array_iterator operator--(int)
-		{
-			array_iterator copy = *this;
-			--*this;
-			return copy;
-		}
-		// += and -= returning reference
-		array_iterator operator+=(std::size_t const& n) { m_i += n; return *this; }
-		array_iterator operator-=(std::size_t const& n)	{ m_i -= n; return *this; }
-		// + and - returning copy
-		array_iterator operator+(std::size_t const& n) const
-		{
-			array_iterator copy = *this;
-			copy += n;
-			return copy;
-		}
-		array_iterator operator-(std::size_t const& n) const
-		{
-			array_iterator copy = *this;
-			copy -= n;
-			return copy;
-		}
-		// ==, !=, >, >=, < and <=
-		bool operator==(array_iterator const& right) { return m_i == right.m_i; }
-		bool operator!=(array_iterator const& right) { return m_i != right.m_i; }
-		bool operator>= (array_iterator const& right){ return m_i >= right.m_i; }
-		bool operator<= (array_iterator const& right) { return m_i <= right.m_i; }
-		bool operator>(array_iterator const& right) { return m_i > right.m_i; }
-		bool operator<(array_iterator const& right) { return m_i < right.m_i; }
-
-	private:
-		Array& m_a;
-		std::size_t m_i;
-		std::size_t m_maxSize;
-	};
-
-	template<typename Array>
-	class array_const_iterator
-	{
-	public:
-		array_const_iterator(Array const&a, std::size_t i)
-			: m_a(a)
-			, m_i(i)
-			, m_maxSize(a.size())
-		{}
-		array_const_iterator(array_iterator<Array>::iterator const& itr)
-			: m_a(itr.m_a)
-			, m_i(itr.m_i)
-			, m_maxSize(itr.m_maxSize)
-		{}
-
-		// * and [] returning reference of the actual element
-		Array::const_reference operator*() const { return m_a[m_i]; }
-		Array::const_reference operator[](std::size_t const& i) const { return m_a[m_i + i]; }
-		// ++ and -- returning reference
-		array_const_iterator& operator++() { m_i++; return *this; }
-		array_const_iterator& operator--() { m_i--; return *this; }
-		// ++(int) and --(int) returning copy
-		array_const_iterator operator++(int)
-		{
-			array_const_iterator copy = *this;
-			++*this;
-			return copy;
-		}
-		array_const_iterator operator--(int)
-		{
-			array_const_iterator copy = *this;
-			--*this;
-			return copy;
-		}
-		// += and -= returning reference
-		array_const_iterator& operator+=(std::size_t const& n)
-		{
-			m_i += n;
-			return *this;
-		}
-		array_const_iterator& operator-=(std::size_t const& n)
-		{
-			m_i -= n;
-			return *this;
-		}
-		// + and - returning copy
-		array_const_iterator operator+(std::size_t const& n) const
-		{
-			array_const_iterator copy = *this;
-			copy += n;
-			return copy;
-		}
-		array_const_iterator operator-(std::size_t const& n) const
-		{
-			array_const_iterator copy = *this;
-			copy += n;
-			return copy;
-		}
-
-		// ==, !=, >=, <=, > and <
-		bool operator==(array_const_iterator const& right) const { return m_i == right.m_i; }
-		bool operator!=(array_const_iterator const& right) const { return m_i != right.m_i; }
-		bool operator>=(array_const_iterator const& right) const { return m_i >= right.m_i; }
-		bool operator<=(array_const_iterator const& right) const { return m_i <= right.m_i; }
-		bool operator>(array_const_iterator const& right) const { return m_i > right.m_i; }
-		bool operator<(array_const_iterator const& right) const { return m_i < right.m_i; }
-
-	private:
-		Array const& m_a;
-		std::size_t m_i;
-		std::size_t m_maxSize;
-	};
-
-
-
-	template<typename T, std::size_t N>
-	class MyArray
-	{
-	public:
-		using value_type = T;
-		using size_type = std::size_t;
-		using reference = value_type&;
-		using const_reference = value_type const&;
-		using iterator = array_iterator<MyArray>;
-		using const_iterator = array_const_iterator<MyArray>;
-
-		// size
-		size_type size() const { return N; }
-		// []
-		reference operator[](size_type const& i) { return m_buf[i]; }
-		const_reference operator[](size_type const& i) const { return m_buf[i]; }
-
-		// front and back
-		reference front() { return m_buf[0]; }
-		reference back() { return m_buf[N - 1]; }
-
-		// iterator
-		iterator begin() { return iterator(*this, 0); }
-		iterator end() { return iterator(*this, N); }
-
-		// const version
-		const_iterator cbegin() const { return const_iterator(*this, 0); }
-		const_iterator cend() const { return const_iterator(*this, N); }
-
-		// fill
-		void fill( const_reference v)
-		{
-			for (auto i = 0; i < N; i++)
-			{
-				m_buf[i] = v;
-			}
-		}
-
-	private:
-		value_type m_buf[N];
-	};
-
-}
 #endif
 
 
