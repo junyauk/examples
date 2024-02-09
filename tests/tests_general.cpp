@@ -27,7 +27,12 @@ using namespace TemplateExamples::MyArray;
 
 class MyArrayTests : public ::testing::Test
 {
-public:
+protected:
+	MyArray<int, 10> myarray;
+
+	virtual void SetUp() { reset(); }
+//	virtual void TearDown(){}
+
 	void reset()
 	{
 		for (auto i = 0; i < 10; i++)
@@ -37,7 +42,7 @@ public:
 		}
 	}
 
-	void rangeExceptionTest(function<void()> const &func, const string &expectedMessage)
+	void rangeExceptionTest(function<void()> const& func, const string& expectedMessage)
 	{
 		EXPECT_THROW(func(), std::out_of_range);
 		try { func(); }
@@ -51,28 +56,19 @@ public:
 		}
 	}
 
-protected:
-	MyArray<int, 10> myarray;
 
-	virtual void SetUp()
-	{
-		cout << "SetUp\n";
-		reset();
-	}
-	virtual void TearDown()
-	{
 
-	}
 };
 
 TEST_F(MyArrayTests, MyArrayBasicTests)
 {
+	// size()
+	EXPECT_EQ(myarray.size(), 10);
 	// []
 	int ret = myarray[6];
 	EXPECT_EQ(ret, 6);
 
 	// front()/back()
-	print(myarray);
 	EXPECT_EQ(myarray.front(), 0);
 	EXPECT_EQ(myarray.back(), 9);
 
@@ -84,6 +80,7 @@ TEST_F(MyArrayTests, MyArrayBasicTests)
 	}
 }
 
+#if 1
 TEST_F(MyArrayTests, MyArrayIteratorTests)
 {
 	{	// begin(), end() and operator++ and operator++(int)
@@ -157,7 +154,81 @@ TEST_F(MyArrayTests, MyArrayIteratorTests)
 		EXPECT_FALSE((b + 7) <= m);
 	}
 }
+#endif
 
+#if 1
+TEST_F(MyArrayTests, MyArrayConstIteratorTests)
+{
+	{	// begin(), end() and operator++ and operator++(int)
+		auto itr = myarray.cbegin();
+		// operator[] and operator*
+		for (auto i = 0; i < myarray.size(); i++)
+		{
+			// operator[]
+			EXPECT_EQ(itr[i], i);		// [] read
+			auto itr2 = &itr[i];
+			// operator*
+			EXPECT_EQ(*itr2, i);		// * read
+		}
+	}
+	reset();
+
+	{	// operator-- and operator--(int)
+		auto itr = myarray.cend();
+		auto val = *--itr;
+		EXPECT_EQ(val, 9);
+		----itr;
+		val = *itr--;
+		EXPECT_EQ(val, 7);
+	}
+	{	// operator++ and operator++(int)
+		auto itr = myarray.cbegin();
+		auto val = *itr++;
+		EXPECT_EQ(val, 0);
+		val = *++itr;
+		EXPECT_EQ(val, 2);
+	}
+	{	// multiple
+		auto itr = myarray.cbegin();
+		auto val = *--++++++++++++itr; // + 6 - 1
+		EXPECT_EQ(val, 5);
+		// Note:
+		// forward can be specified multiple times, but backward can't
+		val = *itr++;
+		EXPECT_EQ(val, 5);
+		val = *itr--;
+		EXPECT_EQ(*itr, 5);
+	}
+	{	// operator+=, operator-=, operator+ and operator-
+		auto itr = myarray.cbegin();
+		itr += 8;
+		EXPECT_EQ(*itr, 8);
+		itr -= 3;
+		EXPECT_EQ(*itr, 5);
+		EXPECT_EQ(*(itr + 2), 7);
+		EXPECT_EQ(*(itr - 5), 0);
+	}
+
+	{	// operator==, operator!=, operator<, operator<=, operator> and operator>=  
+		auto b = myarray.cbegin();
+		auto e = myarray.cend();
+		auto itr = b + 9;
+		auto b2 = myarray.cbegin();
+		EXPECT_TRUE(b == b2);
+		EXPECT_FALSE(b == e);
+		EXPECT_TRUE(e - 1 == itr);
+		EXPECT_TRUE(b != itr);
+
+		auto m = b + 5;	// centre
+		EXPECT_TRUE((b + 3) < m);
+		EXPECT_FALSE((b + 3) >= m);
+		EXPECT_TRUE((b + 7) > m);
+		EXPECT_FALSE((b + 7) <= m);
+	}
+}
+#endif
+
+#if 1
 TEST_F(MyArrayTests, MyArrayIteratorExceptionTests)
 {
 	// exception check
@@ -193,7 +264,45 @@ TEST_F(MyArrayTests, MyArrayIteratorExceptionTests)
 		rangeExceptionTest([&] { auto itr = e - 11; }, expectedMessage["decrement"]);
 	}
 }
+#endif
 
+#if 1
+TEST_F(MyArrayTests, MyArrayConstIteratorExceptionTests)
+{
+	// exception check
+	auto b = myarray.cbegin();
+	auto e = myarray.cend();
+	map<string, string>	expectedMessage
+	{
+		{"dereference", "cannot dereference out of range array iterator"},
+		{"increment",   "cannot increment array iterator past end"},
+		{"decrement",   "cannot decrement array iterator before begin"}
+	};
+
+	{	// [] and *
+		rangeExceptionTest([&] { auto itr = b[-1]; }, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto itr = e[0]; }, expectedMessage["dereference"]);
+		rangeExceptionTest([&] { auto val = *e; }, expectedMessage["dereference"]);
+	}
+
+	{	// ++ and --
+		rangeExceptionTest([&] { e++; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { b--; }, expectedMessage["decrement"]);
+	}
+
+	{	// += and -=
+		rangeExceptionTest([&] { e += 1; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { b -= 1; }, expectedMessage["decrement"]);
+	}
+
+	{	// + and -
+		rangeExceptionTest([&] { auto itr = e + 1; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { auto itr = b - 1; }, expectedMessage["decrement"]);
+		rangeExceptionTest([&] { auto itr = b + 10; }, expectedMessage["increment"]);
+		rangeExceptionTest([&] { auto itr = e - 11; }, expectedMessage["decrement"]);
+	}
+}
+#endif
 
 TEST(General, TypeErasure)
 {
