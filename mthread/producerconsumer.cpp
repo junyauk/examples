@@ -14,6 +14,7 @@
 #include <random>
 #include <chrono>
 #include <sstream>
+#include <atomic>
 
 using std::cout;
 using std::endl;
@@ -33,8 +34,9 @@ using std::unique_lock;
 using std::this_thread::sleep_for;
 using std::chrono::milliseconds;
 
+using std::atomic;
 
-namespace Example1
+namespace ProducerConsumer::Example1
 {
 	template <typename T>
 	class Queue
@@ -120,8 +122,8 @@ namespace Example1
 			{
 				unique_lock<mutex> ul(m_mutex);
 				m_isTerminationRequested = true;
+				m_cv.notify_all();
 			}
-			m_cv.notify_all();
 			auto size = m_threads.size();
 			for (auto i = 0; i < size; i++)
 			{
@@ -139,8 +141,8 @@ namespace Example1
 				{
 					return false;
 				}
+				m_cv.notify_all();
 			}
-			m_cv.notify_all();
 			cout << "Printer append <-\n";
 			return true;
 		}
@@ -154,8 +156,8 @@ namespace Example1
 				{
 					return false;
 				}
+				m_cv.notify_all();
 			}
-			m_cv.notify_all();
 			cout << "Printer append <-\n";
 			return true;
 		}
@@ -231,8 +233,10 @@ namespace Example1
 
 };
 
-namespace Example2
+namespace ProducerConsumer::Example2
 {
+	// This example has got 2 threads represent producer and consumer
+	// Both the producer and consumer uses a mutex for accessing a queue.
 	using std::random_device;
 	using std::mt19937;
 	using std::uniform_int_distribution;
@@ -246,7 +250,7 @@ namespace Example2
 	{
 		random_device rd;
 		mt19937	gen(rd());
-		uniform_int_distribution<> dis(1, 100);
+		uniform_int_distribution<> dis(1, 50);
 
 		while (1)
 		{
@@ -279,7 +283,7 @@ namespace Example2
 	{
 		random_device rd;
 		mt19937	gen(rd());
-		uniform_int_distribution<> dis(1, 100);
+		uniform_int_distribution<> dis(1, 50);
 
 		while (1)
 		{
@@ -328,11 +332,238 @@ namespace Example2
 	}
 };
 
+namespace ProducerConsumer::Example3
+{
+	// This example has got a queue class named TaskQueue.
+	// It has got a queue in it.
+	// TaskQueue::addTask() and getTask() methods are used for accessing the queue.
+	// Then a mutex is used for accessing the queue.
+	// addTask() can queue a task any time,
+	// but getTask() can get only when something in the queue.
+	// So the caller who called getTask() will wait for that getTask() retrieves a task.
+
+	class TaskQueue
+	{
+	public:
+		void addTask(int const& val)
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_queue.push(val);
+			m_cv.notify_one();
+		}
+		int getTask()
+		{
+			unique_lock<mutex> ul(m_mutex);
+			m_cv.wait(ul, [this]() { return !m_queue.empty(); });
+			auto val = m_queue.front();
+			m_queue.pop();
+			return val;
+		}
+	private:
+		queue<int>	m_queue;
+		mutex		m_mutex;
+		c_v			m_cv;
+	};
+
+	void producer(TaskQueue& queue, int producerId)
+	{
+		for (auto i = 0; i < 5; i++)
+		{
+			queue.addTask(producerId);
+			sleep_for(milliseconds(100));
+		}
+	}
+	void consumer(TaskQueue& queue)
+	{
+		for (auto i = 0; i < 10; i++)
+		{
+			int taskid = queue.getTask();
+			cout << "Consumer Thread,  Task ID: " << taskid << endl;
+		}
+	}
+
+	void Run_ProducerConsumer()
+	{
+		int numThreads = 3;
+		TaskQueue tq;
+
+		// multiple producers will run
+		vector<thread>	producers;
+		for (auto i = 0; i < numThreads; i++)
+		{
+			producers.emplace_back(producer, std::ref(tq), i);
+//			producers.emplace_back([&] {producer(tq, i); });
+		}
+
+		// only one single consumer get produced tasks
+		thread	consumerThread(consumer, std::ref(tq));
+//		thread  consumerThread([&] {consumer(tq); });
+
+		// wait for all threads to finish
+		for (auto& t : producers)
+		{
+			t.join();
+		}
+
+		consumerThread.join();
+
+		// tq will still have 5 tasks
+	}
+}
+
+namespace ProducerConsumer::Example4
+{
+	// This example uses Producer class and Consumer class
+	// They share a single Queue.
+	// Both classes run multiple threads.
+	// Threads created by Producer class will create an Item with a string,
+	// and push it to the queue.
+	// Threads created by Consumer class will pop an items from the queue,
+	// and run the item for outputting the string.
+	// A sync object is used in the Queue class only.
+	// Producer and Consumer classes don't have a sync mechanism.
+
+	class Item
+	{
+	public:
+		void set(string const & str)
+		{
+			m_str = str;
+		}
+		string operator()()
+		{
+			return "Item( made by " + m_str + " )";
+		}
+
+	private:
+		string m_str;
+	};
+
+	class Queue
+	{
+	public:
+		void push(Item const &item)
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_queue.push(item);
+			m_cv.notify_one();
+		}
+
+		Item pop()
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_cv.wait(ul, [this] {return !m_queue.empty(); });
+			Item item = std::move(m_queue.front());
+			m_queue.pop();
+			return item;
+		}
+
+		bool isEmpty() const
+		{
+			return m_queue.empty();
+		}
+	private:
+		queue<Item>	m_queue;
+		mutex		m_mutex;
+		c_v			m_cv;
+	};
+
+	class Producer
+	{
+	public:
+		Producer(Queue& queue, int const& numThreads)
+			: m_queue(queue)
+			, m_stop(false)
+		{
+			for (auto i = 0; i < numThreads; i++)
+			{
+				m_threads.emplace_back(&Producer::worker, this, i);
+			}
+		}
+		~Producer()
+		{
+			m_stop = true;
+			for (auto& t : m_threads)
+			{
+				t.join();
+			}
+		}
+	private:
+		void worker(int const& threadNumber)
+		{
+			while (!m_stop)
+			{
+				sleep_for(milliseconds(100));
+				Item item;
+				item.set("P" + std::to_string(threadNumber));
+				m_queue.push(item);
+			}
+		}
+
+		Queue& m_queue;
+		atomic<bool>	m_stop;
+		vector<thread>	m_threads;
+	};
+
+	class Consumer
+	{
+	public:
+		Consumer(Queue& q, int const& numThreads)
+			: m_queue(q)
+			, m_stop(false)
+		{
+			for (auto i = 0; i < numThreads; i++)
+			{
+				m_threads.emplace_back(&Consumer::worker, this, i);
+			}
+		}
+		~Consumer()
+		{
+			m_stop = true;
+			for (auto& t : m_threads)
+			{
+				t.join();
+			}
+		}
+	private:
+		void worker(int const& threadNumber)
+		{
+			while (!m_stop)
+			{
+				Item item = m_queue.pop();
+				{
+					unique_lock<mutex> ul(m_mutex);
+					cout << "C" << threadNumber << ": [" << item() << "]" << endl;
+				}
+			}
+		}
+
+		Queue& m_queue;
+		atomic<bool>	m_stop;
+		mutex			m_mutex;
+		vector<thread>	m_threads;
+	};
+
+	void Run_ProducerConsumer()
+	{
+		Queue	q;
+
+		Producer	p(q, 5);
+		Consumer	c(q, 10);
+
+		sleep_for(milliseconds(5000));
+
+		return;
+	}
+}
+
 
 int Run_ProducerConsumer()
 {
-	Example1::Run_ProducerConsumer();
-	Example2::Run_ProducerConsumer();
+	ProducerConsumer::Example1::Run_ProducerConsumer();
+	ProducerConsumer::Example2::Run_ProducerConsumer();
+	ProducerConsumer::Example3::Run_ProducerConsumer();
+	ProducerConsumer::Example4::Run_ProducerConsumer();
 
 	return 0;
 }
