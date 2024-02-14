@@ -17,6 +17,7 @@
 #include "doublecheckedlocking.h"
 #include "halfsynchalfasync.h"
 #include "leaderfollower.h"
+#include "monitorobject.h"
 
 // Note:
 // These tests are for testing multi thread examples
@@ -106,4 +107,9 @@ TEST(MultiThread, HalfSyncHalfAsync)
 TEST(MultiThread, LeaderFollower)
 {
 	EXPECT_NO_THROW(Run_LeaderFollower());
+}
+
+TEST(MultiThread, MonitorObject)
+{
+	EXPECT_NO_THROW(Run_MonitorObject());
 }
