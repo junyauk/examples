@@ -1,17 +1,22 @@
 #include "pch.h"
 
+#include <iostream>
 #include <string>
 #include <map>
 #include <functional>
+#include <sstream>
 
 #include "templates.h"
 #include "typeerasure.h"
+#include "ringbuffer.h"
+#include "crtp.h"
 
 using std::cout;
 using std::endl;
 using std::string;
 using std::map;
 using std::function;
+using std::stringstream;
 
 TEST(General, IsSame)
 {
@@ -331,4 +336,175 @@ TEST(General, TypeErasure)
 	EXPECT_NO_THROW(Run_TypeErasureStep6());
 	EXPECT_NO_THROW(Run_TypeErasureExercise1());
 }
+
+TEST(General, CircularIndex)
+{
+	CircularIndex	ci1{ 5 };
+	CircularIndex	ci2{ 14 };
+
+	// operator =
+	ci1 = 0;
+	EXPECT_EQ(ci1, 0);
+	ci1 = 5;
+	EXPECT_EQ(ci1, 0);
+	ci1 = 14;
+	EXPECT_EQ(ci1, 4);
+	ci1 = -3;		// Note: size_t is unsigned, so -3 will be treated as 18446744073709551613.
+	ci2 = -3;
+	EXPECT_EQ(ci1, 3);
+	size_t val = -1;// Note: -1 will be treated as max size 18446744073709551615
+	ci1 = val;
+	ci2 = val;
+	EXPECT_EQ(ci1, 0);
+	EXPECT_EQ(ci2, 1);
+	ci1 = 7;
+	ci2 = 8;
+
+	// Note:
+	// Copy constructor and operator= is deleted
+	// ci1 = ci2;
+
+	// ++ and --
+	ci1 = 0; ci2 = 0;
+	for (auto i = 0; i < 100; ++i)
+	{
+		EXPECT_EQ(ci1, i % 5);
+		EXPECT_EQ(ci2, i % 14);
+		++ci1;
+		++ci2;
+	}
+	ci1 = 99; ci2 = 99;
+	for (auto i = 99; i >=  0; --i)
+	{
+		EXPECT_EQ(ci1, i % 5);
+		EXPECT_EQ(ci2, i % 14);
+		--ci1;
+		--ci2;
+	}
+	// ++(int) and --(int)
+	ci1 = 0; ci2 = 0;
+	for (auto i = 0; i < 100; ++i)
+	{
+		EXPECT_EQ(ci1, i % 5);
+		EXPECT_EQ(ci2, i % 14);
+		ci1++;
+		ci2++;
+	}
+	ci1 = 99; ci2 = 99;
+	for (auto i = 99; i >= 0; --i)
+	{
+		EXPECT_EQ(ci1, i % 5);
+		EXPECT_EQ(ci2, i % 14);
+		ci1--;
+		ci2--;
+	}
+	ci1 = 0; ci2 = 0;
+	for (auto i = 0; i < 100; ++i)
+	{
+		int expected1 = ci1;
+		EXPECT_EQ(expected1, ci1++);
+		int expected2 = ci2;
+		EXPECT_EQ(expected2, ci2--);
+	}
+
+	// + and -
+	ci1 = 4;
+	size_t tmp;
+	tmp = ci1 + 1;
+	EXPECT_EQ(tmp, 0);
+	tmp = ci1 + 13;
+	EXPECT_EQ(tmp, 2);
+	tmp = ci1 - 6;
+	EXPECT_EQ(tmp, 3);
+	tmp = ci1 - 23;
+	EXPECT_EQ(tmp, 1);
+
+	// += and -=
+	ci1 = 0;
+	ci1 += 3;
+	EXPECT_EQ(ci1, 3);
+	ci1 += 11;
+	EXPECT_EQ(ci1, 4);
+	ci1 += 26;
+	EXPECT_EQ(ci1, 0);
+	ci2 = 0;
+	ci2 -= 1;
+	EXPECT_EQ(ci2, 13);
+	ci2 -= 10;
+	EXPECT_EQ(ci2, 3);
+	ci2 -= 29;
+	EXPECT_EQ(ci2, 2);
+
+	// == and !=
+	ci1 = 3;
+	ci2 = 3;
+	EXPECT_TRUE(ci1 == ci2);
+	ci1 = 1;
+	EXPECT_TRUE(ci1 != ci2);
+
+	// =
+	ci1 = 2;
+	int val2 = ci1;
+	EXPECT_EQ(val2, 2);
+
+	// <<
+	ci2 = 12;
+	string str = ci2;
+	EXPECT_STREQ(str.c_str(), "12");
+
+	stringstream ss;
+	ss << ci2;
+	EXPECT_STREQ(ss.str().c_str(), "12");
+
+
+}
+
+
+TEST(General, RingBuffer)
+{
+	{ // int ring buffer
+		constexpr int bufSize = 10;
+		RingBuffer<int, 10>	intBuf;
+		EXPECT_TRUE(intBuf.isEmpty());
+		EXPECT_FALSE(intBuf.isFull());
+		for (auto i = 0; i < bufSize; ++i)
+		{
+			intBuf.push(i);
+		}
+		EXPECT_EQ(intBuf.getSize(), bufSize);
+		EXPECT_FALSE(intBuf.isEmpty());
+		EXPECT_TRUE(intBuf.isFull());
+		EXPECT_THROW(intBuf.push(100), std::overflow_error);
+		for (auto i = 0; i < bufSize; ++i)
+		{
+			EXPECT_EQ(intBuf.pop(), i);
+		}
+		EXPECT_TRUE(intBuf.isEmpty());
+		EXPECT_FALSE(intBuf.isFull());
+		EXPECT_THROW(intBuf.pop(), std::underflow_error);
+	}
+
+	{ // string ring buffer
+		constexpr int bufSize = 7;
+		RingBuffer<string, bufSize>	strBuf;
+		EXPECT_TRUE(strBuf.isEmpty());
+		EXPECT_FALSE(strBuf.isFull());
+		for (auto i = 0; i < bufSize; ++i)
+		{
+			strBuf.push(std::to_string(i));
+		}
+		EXPECT_EQ(strBuf.getSize(), bufSize);
+		EXPECT_FALSE(strBuf.isEmpty());
+		EXPECT_TRUE(strBuf.isFull());
+		EXPECT_THROW(strBuf.push("10"), std::overflow_error);
+		for (auto i = 0; i < bufSize; ++i)
+		{
+			EXPECT_EQ(strBuf.pop(), std::to_string(i));
+		}
+		EXPECT_TRUE(strBuf.isEmpty());
+		EXPECT_FALSE(strBuf.isFull());
+		EXPECT_THROW(strBuf.pop(), std::underflow_error);
+	}
+}
+
 

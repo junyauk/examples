@@ -162,6 +162,7 @@
     <ClInclude Include="..\includes\monitorobject.h" />
     <ClInclude Include="..\includes\multithreadsum.h" />
     <ClInclude Include="..\includes\producerconsumer.h" />
+    <ClInclude Include="..\includes\reactor.h" />
     <ClInclude Include="..\includes\readlockwritelock.h" />
     <ClInclude Include="..\includes\singlethreadexecution.h" />
     <ClInclude Include="..\includes\threadpermessage.h" />
@@ -191,6 +192,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="producerconsumer.cpp" />
+    <ClCompile Include="reactor.cpp" />
     <ClCompile Include="readlockwritelock.cpp" />
     <ClCompile Include="singlethreadexecution.cpp" />
     <ClCompile Include="threadpermessage.cpp" />

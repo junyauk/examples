@@ -18,6 +18,7 @@
 #include "halfsynchalfasync.h"
 #include "leaderfollower.h"
 #include "monitorobject.h"
+#include "reactor.h"
 
 // Note:
 // These tests are for testing multi thread examples
@@ -112,4 +113,9 @@ TEST(MultiThread, LeaderFollower)
 TEST(MultiThread, MonitorObject)
 {
 	EXPECT_NO_THROW(Run_MonitorObject());
+}
+
+TEST(MultiThread, Reactor)
+{
+	EXPECT_NO_THROW(Run_Reactor());
 }

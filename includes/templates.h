@@ -22,7 +22,6 @@ namespace TemplateExamples::IsSameType
 	};
 }
 
-#if 1
 namespace TemplateExamples::MyArray
 {
 	template<typename Array>
@@ -324,8 +323,6 @@ namespace TemplateExamples::MyArray
 		std::cout << std::endl;
 	}
 }
-#else
-#endif
 
 
 #endif // TEMPLATES_H_INCLUDED
