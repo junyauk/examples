@@ -90,9 +90,19 @@ TEST(MultiThread, ThreadSpecificStorage)
 	EXPECT_NO_THROW(Run_ThreadSpecificStorage());
 }
 
-TEST(MultiThread, ActiveObject)
+TEST(MultiThread, ActiveObjectBasic1)
 {
-	EXPECT_NO_THROW(Run_ActiveObject());
+	using namespace ActiveObject::Basic1;
+	Tests tests;
+	EXPECT_NO_THROW(tests.run());
+}
+TEST(MultiThread, ActiveObjectBasic2)
+{
+	using namespace ActiveObject::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
 }
 
 TEST(MultiThread, DoubleCheckedLocking)

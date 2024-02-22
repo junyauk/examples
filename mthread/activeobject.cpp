@@ -340,3 +340,210 @@ int Run_ActiveObject()
 	Example3::Run_ActiveObject();
 	return 0;
 }
+
+
+namespace ActiveObject::Basic1
+{
+	ActiveObject::ActiveObject()
+		: m_stop(false)
+	{
+		m_thread = thread(&ActiveObject::worker, this);
+	}
+	ActiveObject::~ActiveObject()
+	{
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_stop = true;
+			m_cv.notify_all();
+		}
+		m_thread.join();
+	}
+
+	void ActiveObject::run(function<void()>& task)
+	{
+		unique_lock<mutex>	ul(m_mutex);
+		m_tasks.push(task);
+		m_cv.notify_one();
+	}
+	void ActiveObject::worker()
+	{
+		while (!m_stop)
+		{
+			function<void()> task;
+			unique_lock<mutex>	ul(m_mutex);
+			m_cv.wait(ul, [this] { return !m_tasks.empty() || m_stop; });
+			if (m_stop)
+			{
+				break;
+			}
+			task = m_tasks.front();
+			m_tasks.pop();
+			task();
+		}
+	}
+
+	// Any function
+	void func1()
+	{
+		cout << "Start running void func1()\n";
+		sleep_for(seconds(1));
+		cout << "Finish running void func1()\n";
+	}
+
+	auto lambda = []() -> void
+		{
+			cout << "Start running lambda\n";
+			sleep_for(seconds(1));
+			cout << "Finish running lambda\n";
+		};
+
+	void func2(string const& str)
+	{
+		cout << "Start running func2( " << str << ")\n";
+		sleep_for(seconds(1));
+		cout << "Finish running func2( " << str << ")\n";
+	}
+
+	int Tests::run()
+	{
+		{
+			ActiveObject ao;
+			function<void()> f;
+			f = func1;
+			ao.run(f);
+			f = lambda;
+			ao.run(f);
+			f = std::bind(func2, "parameter");
+			ao.run(f);
+			sleep_for(seconds(5));
+
+			f = std::bind(&Tests::dummy_non_static_public_func, this, "parameter");
+			ao.run(f);
+			f = std::bind(&Tests::dummy_non_static_private_func, this, "parameter");
+			ao.run(f);
+			sleep_for(seconds(5));
+
+			f = std::bind(dummy_static_public_func, "parameter");
+			ao.run(f);
+			f = std::bind(dummy_static_private_func, "parameter");
+			ao.run(f);
+			sleep_for(seconds(5));
+
+		} // Expect calling ActiveObject's destructor here
+		return 0;
+	}
+
+	void Tests::dummy_static_public_func(string const& str)
+	{
+		cout << "Start running dummy_static_public_func( " << str << ")\n";
+		sleep_for(seconds(1));
+		cout << "Finish running dummy_static_public_func( " << str << ")\n";
+	}
+	void Tests::dummy_non_static_public_func(string const& str) const
+	{
+		cout << "Start running dummy_non_static_public_func( " << str << ")\n";
+		sleep_for(seconds(1));
+		cout << "Finish running dummy_non_static_public_func( " << str << ")\n";
+	}
+
+	void Tests::dummy_static_private_func(string const& str)
+	{
+		cout << "Start running dummy_static_private_func( " << str << ")\n";
+		sleep_for(seconds(1));
+		cout << "Finish running dummy_static_private_func( " << str << ")\n";
+	}
+	void Tests::dummy_non_static_private_func(string const& str) const
+	{
+		cout << "Start running dummy_non_static_private_func( " << str << ")\n";
+		sleep_for(seconds(3));
+		cout << "Finish running dummy_non_static_private_func( " << str << ")\n";
+	}
+}
+
+namespace ActiveObject::Basic2
+{
+	ActiveObject::ActiveObject()
+		: m_stop(false)
+	{
+		m_thread = thread(&ActiveObject::worker, this);
+	}
+		
+	ActiveObject::~ActiveObject()
+	{
+		{
+			unique_lock<mutex>	ul(m_mutex);
+			m_stop = true;
+			m_cv.notify_all();
+		}
+		if (m_thread.joinable())
+		{
+			m_thread.join();
+		}
+	}
+
+	void ActiveObject::worker()
+	{
+		while (!m_stop)
+		{
+			function<void()> task;
+			{
+				unique_lock<mutex>	ul(m_mutex);
+				m_cv.wait(ul, [this] {return !m_tasks.empty() || m_stop; });
+				if (m_stop)
+				{
+					return;
+				}
+				task = m_tasks.front();
+				m_tasks.pop();
+			}
+			task();
+		}
+	}
+
+
+	int add(const int a, const int b)
+	{
+		return a + b;
+	}
+
+	string print(string const &str1, int a)
+	{
+		return "Combined: " + str1 + "_" + std::to_string(a);
+	}
+
+
+	int Tests::run()
+	{
+		{ // Lambda
+			ActiveObject	ao;
+			auto f = ao.run([] {return 42; });
+			auto ret = f.get();
+			if (ret != 42)
+			{
+				return -1;
+			}
+			cout << "Result: " << ret << endl;
+		}
+		{ // function (int, int)
+			ActiveObject ao;
+			auto f = ao.run(add, 10, 20);
+			auto ret = f.get();
+			if (ret != 30)
+			{
+				return -1;
+			}
+			cout << "Result: " << ret << endl;
+		}
+		{ // function (str, int)
+			ActiveObject ao;
+			auto f = ao.run(print, "Print", 20);
+			auto ret = f.get();
+			if (ret != "Combined: Print_20")
+			{
+				return -1;
+			}
+			cout << "Result: " << ret << endl;
+		}
+		return 0;
+	}
+}

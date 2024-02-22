@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mthread", "mthread\mthread.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "general", "general\general.vcxproj", "{F00B2121-A420-4210-AEFA-0D21EE45391D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sthread", "sthread\sthread.vcxproj", "{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{F00B2121-A420-4210-AEFA-0D21EE45391D}.Release|x64.Build.0 = Release|x64
 		{F00B2121-A420-4210-AEFA-0D21EE45391D}.Release|x86.ActiveCfg = Release|Win32
 		{F00B2121-A420-4210-AEFA-0D21EE45391D}.Release|x86.Build.0 = Release|Win32
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Debug|x64.ActiveCfg = Debug|x64
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Debug|x64.Build.0 = Debug|x64
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Debug|x86.ActiveCfg = Debug|Win32
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Debug|x86.Build.0 = Debug|Win32
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Release|x64.ActiveCfg = Release|x64
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Release|x64.Build.0 = Release|x64
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Release|x86.ActiveCfg = Release|Win32
+		{71C7F06C-6A83-4B38-A653-E775DFCD6DDC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

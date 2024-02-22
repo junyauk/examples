@@ -115,6 +115,7 @@
     <ClCompile Include="tests_crtp.cpp" />
     <ClCompile Include="tests_general.cpp" />
     <ClCompile Include="tests_mthread.cpp" />
+    <ClCompile Include="tests_sthread.cpp" />
     <ClCompile Include="tests_zenn.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,9 @@
     </ProjectReference>
     <ProjectReference Include="..\mthread\mthread.vcxproj">
       <Project>{3d139cf0-0dd9-473a-ae20-c6fec197f6ad}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\sthread\sthread.vcxproj">
+      <Project>{71c7f06c-6a83-4b38-a653-e775dfcd6ddc}</Project>
     </ProjectReference>
     <ProjectReference Include="..\zenn\zenn.vcxproj">
       <Project>{aa81771e-08c1-48a4-b99b-a860b51ae0ba}</Project>
