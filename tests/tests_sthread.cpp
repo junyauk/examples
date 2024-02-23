@@ -12,11 +12,19 @@ TEST(SingleThread, AbstactFactory)
 	EXPECT_EQ(ret, 0);
 }
 
-TEST(SingleThread, Adapter)
+TEST(SingleThread, AdapterBasic1)
 {
 	using namespace Adapter::Basic1;
 	int ret = 0;
 	EXPECT_NO_THROW(ret = Run_Adapter());
+	EXPECT_EQ(ret, 0);
+}
+TEST(SingleThread, AdapterBasic2)
+{
+	using namespace Adapter::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
 	EXPECT_EQ(ret, 0);
 }
 
