@@ -3,6 +3,7 @@
 #include "abstractfactory.h"
 #include "adapter.h"
 #include "visitor.h"
+#include "builder.h"
 
 TEST(SingleThread, AbstactFactory)
 {
@@ -40,6 +41,15 @@ TEST(SingleThread, VisitorBasic1)
 TEST(SingleThread, VisitorBasic2)
 {
 	using namespace Visitor::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(SingleThread, BuilderBasic1)
+{
+	using namespace Builder::Basic1;
 	Tests tests;
 	int ret = 0;
 	EXPECT_NO_THROW(ret = tests.run());
