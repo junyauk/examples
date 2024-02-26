@@ -4,6 +4,7 @@
 #include "adapter.h"
 #include "visitor.h"
 #include "builder.h"
+#include "command.h"
 
 TEST(SingleThread, AbstactFactory)
 {
@@ -55,3 +56,31 @@ TEST(SingleThread, BuilderBasic1)
 	EXPECT_NO_THROW(ret = tests.run());
 	EXPECT_EQ(ret, 0);
 }
+
+TEST(SingleThread, BuilderBasic2)
+{
+	using namespace Builder::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(SingleThread, CommandBasic1)
+{
+	using namespace Command::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(SingleThread, CommandBasic2)
+{
+	using namespace Command::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+

@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 #include <memory>
 
 #include "builder.h"
@@ -9,8 +11,12 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::stringstream;
+using std::vector;
 using std::shared_ptr;
 using std::make_shared;
+using std::unique_ptr;
+using std::make_unique;
 
 namespace Builder::Basic1
 {
@@ -18,7 +24,7 @@ namespace Builder::Basic1
 	class CarModel : public IPlasticModel
 	{
 	public:
-		CarModel() {}
+		CarModel() : m_scale(12) {}
 		CarModel(CarModel const& other) // copy constructor
 		{
 			m_material = other.m_material;
@@ -47,7 +53,7 @@ namespace Builder::Basic1
 	class ShipModel : public IPlasticModel
 	{
 	public:
-		ShipModel() {}
+		ShipModel() : m_scale(700) {}
 		ShipModel(ShipModel const& other) // copy constructor
 		{
 			m_material = other.m_material;
@@ -213,3 +219,322 @@ namespace Builder::Basic1
 		return 0;
 	}
 }
+
+namespace Builder::Basic2
+{
+#if 1
+	static string buildString(vector<string>& list)
+	{
+		stringstream ss;
+		for (auto &s: list)
+		{
+			ss << ", " << s;
+		}
+		string ret = ss.str();
+		return ret.substr(2);
+	}
+
+	static vector<string> findingIngredients(vector<string>& actual, vector<string>& expected)
+	{
+		vector<string> missing;
+		for (auto& e : expected)
+		{
+			bool found = false;
+			for (auto& a : actual)
+			{
+				if (a == e)
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				missing.push_back(e);
+			}
+		}
+		return missing;
+	}
+
+	class OnionSoup : public IFood
+	{
+	public:
+		virtual bool setIngredients(vector<string> ingredients) override
+		{
+			vector<string> missing = findingIngredients(ingredients, m_expectedIngredients);
+			if (missing.size())
+			{
+				cout << "Not enough ingredients [" << buildString(missing) << "]\n";
+				return false;
+			}
+			m_ingredients = ingredients;
+			cout << "Ingredients for OnionSoup [ " << buildString(ingredients) << " ] were set\n";
+			return true;
+		}
+		virtual void setCookingMethods(vector<string> methods) override
+		{
+			m_methods = methods;
+		}
+		virtual void cook() override
+		{
+			cout << " Cooking onion soup...\n";
+			for (auto& s : m_methods)
+			{
+				cout << "  - " << s << endl;
+			}
+			cout << " Finished cooking. Ready to serve!\n";
+			m_soup = "Onion Soup";
+		}
+		virtual string getFood() const override
+		{
+			return m_soup;
+		}
+	private:
+		vector<string> m_expectedIngredients = { "Onion" };
+		vector<string> m_ingredients;
+		vector<string> m_methods;
+		string m_soup;
+	};
+
+	class Cassoulet : public IFood
+	{
+	public:
+		virtual bool setIngredients(vector<string> ingredients) override
+		{
+			vector<string> missing = findingIngredients(ingredients, m_expectedIngredients);
+			if (missing.size())
+			{
+				cout << "Not enough ingredients [" << buildString(missing) << "]\n";
+				return false;
+			}
+			m_ingredients = ingredients;
+			cout << "Ingredients for Cassoulet [ " << buildString(ingredients) << " ] were set\n";
+			return true;
+		}
+		virtual void setCookingMethods(vector<string> methods) override
+		{
+			m_methods = methods;
+		}
+		virtual void cook() override
+		{
+			cout << " Cooking cassoulet...\n";
+			for (auto& s : m_methods)
+			{
+				cout << "  - " << s << endl;
+			}
+			cout << " Finished cooking. Ready to serve!\n";
+			m_Cassoulet = "Casseoulet";
+		}
+		virtual string getFood() const override
+		{
+			return m_Cassoulet;
+		}
+	private:
+		vector<string> m_expectedIngredients = { "Sausage", "Beans" };
+		vector<string> m_ingredients;
+		vector<string> m_methods;
+		string m_Cassoulet;
+	};
+
+	class Ratatouille : public IFood
+	{
+	public:
+		virtual bool setIngredients(vector<string> ingredients) override
+		{
+			vector<string> missing = findingIngredients(ingredients, m_expectedIngredients);
+			if (missing.size())
+			{
+				cout << "Not enough ingredients [" << buildString(missing) << "]\n";
+				return false;
+			}
+			m_ingredients = ingredients;
+			cout << "Ingredients for Ratatouille [ " << buildString(ingredients) << " ] were set\n";
+			return true;
+		}
+		virtual void setCookingMethods(vector<string> methods) override
+		{
+			m_methods = methods;
+		}
+		virtual void cook() override
+		{
+			cout << " Cooking ratatouille...\n";
+			for (auto& s : m_methods)
+			{
+				cout << "  - " << s << endl;
+			}
+			cout << " Finished cooking. Ready to serve!\n";
+			m_ratatouille = "Ratatouille";
+		}
+		virtual string getFood() const override
+		{
+			return m_ratatouille;
+		}
+	private:
+		vector<string> m_expectedIngredients = { "Onion", "Pepper", "Courgette", "Aubergine" };
+		vector<string> m_ingredients;
+		vector<string> m_methods;
+		string m_ratatouille;
+	};
+
+	class FrenchChef : public IChef
+	{
+	public:
+		virtual void prepareIngredients(vector<string>& ingredients) override
+		{
+			// Check today's ingredients
+			vector<string> missing = findingIngredients(ingredients, m_ingredientsForTodaysMenu);
+			if (missing.size())
+			{
+				cout << "Not enough ingredients [" << buildString(missing) << "]\n";
+				return;
+			}
+			vector<string> onionIngredients = { "Onion" };
+			unique_ptr<IFood> onionSoup = make_unique<OnionSoup>();
+			if (onionSoup->setIngredients(onionIngredients))
+			{
+				vector<string> cookingMethods = { "Cut onions", "Melt butter in a pan", "Fry onions", "Add stock", "Simmer"};
+				onionSoup->setCookingMethods(cookingMethods);
+				m_food.emplace_back(std::move(onionSoup));
+			}
+
+			vector<string> cassouletIngredients = { "Sausage", "Beans" };
+			unique_ptr<IFood> cassoulet = make_unique<Cassoulet>();
+			if (cassoulet->setIngredients(cassouletIngredients))
+			{
+				vector<string> cookingMethods = { "Cut ingredients", "Heat olive oil in a pan", "Fry ingredients", "Add stock", "Simmer long time" };
+				cassoulet->setCookingMethods(cookingMethods);
+				m_food.emplace_back(std::move(cassoulet));
+			}
+
+			vector<string> ratatouilleIngredients = { "Onion", "Pepper", "Courgette", "Aubergine" };
+			unique_ptr<IFood> ratatouille = make_unique<Ratatouille>();
+			if (ratatouille->setIngredients(ratatouilleIngredients))
+			{
+				vector<string> cookingMethods = { "Cut ingredients", "Heat olive oil in a pan", "Fry ingredients", "Add stock", "Simmer" };
+				ratatouille->setCookingMethods(cookingMethods);
+				m_food.emplace_back(std::move(ratatouille));
+			}
+		}
+		virtual void cookFood() override
+		{
+			for (auto& f : m_food)
+			{
+				f->cook();
+			}
+		}
+		virtual vector<unique_ptr<IFood>> getFood() override
+		{
+			vector<unique_ptr<IFood>> served;
+
+			for (auto& f : m_food)
+			{
+				served.emplace_back(std::move(f));
+			}
+			m_food.clear();
+			return served;
+		}
+
+	private:
+		vector<string> m_ingredientsForTodaysMenu = { "Onion", "Sausage", "Beans", "Peppter", "Courgette", "Aubergine" };
+		string m_menu;
+		vector<unique_ptr<IFood>> m_food;
+		vector<string> m_dbg;
+	};
+
+	class FrenchRestaurant : public IRestaurant
+	{
+	public:
+		virtual void setChef(weak_ptr<IChef> chef) override
+		{
+			m_chef = std::static_pointer_cast<FrenchChef>(chef.lock());
+		}
+		virtual void open() override
+		{
+			shared_ptr<FrenchChef> chef = m_chef.lock();
+			if (chef != nullptr)
+			{
+				chef->prepareIngredients(m_ingredients);
+			}
+			cout << "French restaurant is open\n";
+		}
+		virtual void close() override
+		{
+			cout << "French restaurant is close\n";
+		}
+		virtual void addOrder()
+		{
+			cout << "Order was added, our chef starts cooking now.\n";
+			shared_ptr<FrenchChef> chef = m_chef.lock();
+			if (chef != nullptr)
+			{
+				chef->cookFood();
+			}
+		}
+		virtual void serveFood()
+		{
+			shared_ptr<FrenchChef> chef = m_chef.lock();
+			if (chef != nullptr)
+			{
+				vector<unique_ptr<IFood>> food = chef->getFood();
+				cout << "serving...\n";
+				for (auto& f : food)
+				{
+					cout << " - " << f->getFood() << endl;
+				}
+			}
+			cout << "Bon appetit!\n";
+		}
+	private:
+		vector<string> m_ingredients = { "Onion", "Sausage", "Beans", "Peppter", "Courgette", "Aubergine" };
+		weak_ptr<FrenchChef>	m_chef;
+	};
+#else
+	class FrenchChef : public IChef
+	{
+	public:
+		virtual void prepareIngredients(vector<string>& ingredients) override
+		{
+			
+		}
+		virtual void cookFood() override {}
+		virtual vector<unique_ptr<IFood>> getFood() override
+		{
+			vector<unique_ptr<IFood>> served;
+			
+			for (auto& f : m_food)
+			{
+				served.emplace_back(std::move(f));
+			}
+			m_food.clear();
+			return served;
+		}
+	private:
+		vector<unique_ptr<IFood>> m_food;
+	};
+	class FrenchRestaurant : public IRestaurant
+	{
+	public:
+		virtual void setChef(weak_ptr<IChef> chef) override {}
+		virtual void open() override {}
+		virtual void close() override {}
+		virtual void addOrder() override {}
+		virtual void serveFood() override {}
+	};
+
+#endif
+int Tests::run()
+	{
+		FrenchRestaurant restaurant;
+		shared_ptr<FrenchChef>	chef = make_shared<FrenchChef>();
+
+		restaurant.setChef(chef);
+		restaurant.open();
+		restaurant.addOrder();
+		restaurant.serveFood();
+
+		// further tests needs to be implemented here
+
+		return 0;
+	}
+}
+

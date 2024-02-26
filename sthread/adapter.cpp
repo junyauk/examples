@@ -116,7 +116,8 @@ namespace Adapter::Basic2
 		}
 		virtual string getStr_New() const
 		{
-			string tmp{m_old.getStr().rbegin(), m_old.getStr().rend()};
+			string tmp = m_old.getStr();
+			std::reverse(tmp.begin(), tmp.end());
 			// modify the old stype val so that the new system can understand it
 			return tmp;
 		}

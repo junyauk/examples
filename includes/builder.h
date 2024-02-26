@@ -3,11 +3,16 @@
 #define BUILDER_H_INCLUDED
 
 #include <string>
+#include <vector>
 #include <memory>
 
+
 using std::string;
+using std::vector;
 using std::shared_ptr;
 using std::make_shared;
+using std::weak_ptr;
+using std::unique_ptr;
 
 namespace Builder::Basic1
 {
@@ -49,5 +54,43 @@ namespace Builder::Basic1
 	};
 }
 
+namespace Builder::Basic2
+{
+	class IFood
+	{
+	public:
+		virtual ~IFood() {}
+		virtual bool setIngredients(vector<string> ingredients) = 0;
+		virtual void setCookingMethods(vector<string> methods) = 0;
+		virtual void cook() = 0;
+		virtual string getFood() const = 0;
+	};
+
+	class IChef
+	{
+	public:
+		virtual ~IChef() {}
+		virtual void prepareIngredients(vector<string>& ingredients) = 0;
+		virtual void cookFood() = 0;
+		virtual vector<unique_ptr<IFood>> getFood() = 0;
+	};
+
+	class IRestaurant
+	{
+	public:
+		virtual ~IRestaurant() {}
+		virtual void setChef(weak_ptr<IChef> chef) = 0;
+		virtual void open() = 0;
+		virtual void close() = 0;
+		virtual void addOrder() = 0;
+		virtual void serveFood() = 0;
+	};
+
+	class Tests
+	{
+	public:
+		int run();
+	};
+}
 
 #endif

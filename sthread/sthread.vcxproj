@@ -152,6 +152,7 @@
     <ClInclude Include="..\includes\abstractfactory.h" />
     <ClInclude Include="..\includes\adapter.h" />
     <ClInclude Include="..\includes\builder.h" />
+    <ClInclude Include="..\includes\command.h" />
     <ClInclude Include="..\includes\visitor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="abstractfactory.cpp" />
     <ClCompile Include="adapter.cpp" />
     <ClCompile Include="builder.cpp" />
+    <ClCompile Include="command.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
