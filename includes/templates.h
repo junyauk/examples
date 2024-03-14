@@ -2,6 +2,12 @@
 #ifndef TEMPLATES_H_INCLUDED
 #define TEMPLATES_H_INCLUDED
 
+#include <string>
+#include <vector>
+#include <concepts>
+using std::string;
+using std::vector;
+
 namespace TemplateExamples::IsSameType
 {
 	template<typename T, typename U>
@@ -322,6 +328,95 @@ namespace TemplateExamples::MyArray
 		}
 		std::cout << std::endl;
 	}
+}
+
+namespace TemplateExamples::Concept1
+{
+	using std::cout;
+	using std::endl;
+
+	template<typename T>
+	concept Numeric = std::is_arithmetic_v<T>;
+	template<typename T>
+	concept Float = std::is_floating_point_v<T>;
+	template<typename T>
+	concept StringType = std::is_convertible_v<T, string>;
+	template<typename T>
+	concept ValidArg = Numeric<T> || Float<T> || StringType<T>;
+	template<typename...Args>
+	concept AllValidArgs = (ValidArg<Args> && ...); // using fold expression (since C++17)
+
+	class X
+	{
+	public:
+		// Constructor taking multiple arguments with concepts
+		template<typename...Args>
+		X(Args...args)
+		{
+			(processValues(std::forward<Args>(args)), ...); // using fold expression (since C++17)
+		}
+		// Function to display values stored in the vectors
+		void displayValues() const {
+			cout << "Integer values: ";
+			for (const auto& value : m_intValues)
+			{
+				cout << value << " ";
+			}
+			cout << endl;
+
+			cout << "Float values: ";
+			for (const auto& value : m_floatValues)
+			{
+				cout << value << " ";
+			}
+			cout << endl;
+
+			cout << "String values: ";
+			for (const auto& value : m_stringValues)
+			{
+				cout << value << " ";
+			}
+			cout << endl;
+		}
+
+	private:
+		// Function to process each argument based on its type
+#if 0 // using constexpr
+		template<typename T>
+		void processValues(T&& value)
+		{
+			if constexpr (Float<T>)
+			{
+				m_floatValues.emplace_back(value);
+			}
+			else if constexpr (StringType<T>)
+			{
+				m_stringValues.emplace_back(value);
+			}
+			else if constexpr (Numeric<T>)
+			{
+				m_intValues.emplace_back(static_cast<int>(value));
+			}
+		}
+#else // using polymorphism
+		void processValues(int&& value)
+		{
+			m_intValues.emplace_back(value);
+		}
+		void processValues(float&& value)
+		{
+			m_floatValues.emplace_back(value);
+		}
+		void processValues(string&& value)
+		{
+			m_stringValues.emplace_back(value);
+		}
+#endif
+
+		vector<int> m_intValues;
+		vector<float> m_floatValues;
+		vector<string> m_stringValues;
+	};
 }
 
 

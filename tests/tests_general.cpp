@@ -10,6 +10,7 @@
 #include "typeerasure.h"
 #include "ringbuffer.h"
 #include "crtp.h"
+#include "sharedpinter.h"
 
 using std::cout;
 using std::endl;
@@ -507,4 +508,57 @@ TEST(General, RingBuffer)
 	}
 }
 
+
+TEST(General, SharedPointerBasic1)
+{
+	using namespace SharedPointer::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(General, SharedPointerBasic2)
+{
+	using namespace SharedPointer::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(General, TemplateConcept1)
+{
+	using namespace TemplateExamples::Concept1;
+
+	string result;
+	{
+		X x1(10, 5.5f, std::string("Hello")); // No explicit template arguments
+		testing::internal::CaptureStdout();
+		// Displaying initialized values
+		x1.displayValues();
+		result = testing::internal::GetCapturedStdout();
+		char expected[] = "Integer values: 10 \nFloat values: 5.5 \nString values: Hello \n";
+		EXPECT_STREQ(expected, result.c_str());
+	}
+	
+	{
+		X x2("Hello", 10, 5.5f); // No explicit template arguments
+		testing::internal::CaptureStdout();
+		x2.displayValues();
+		result = testing::internal::GetCapturedStdout();
+		char expected[] = "Integer values: 10 \nFloat values: 5.5 \nString values: Hello \n";
+		EXPECT_STREQ(expected, result.c_str());
+	}
+
+	{
+		X x3("Hello", 10, "world", 5.5f, 152, 99, 32.9f); // No explicit template arguments
+		testing::internal::CaptureStdout();
+		x3.displayValues();
+		result = testing::internal::GetCapturedStdout();
+		char expected[] = "Integer values: 10 152 99 \nFloat values: 5.5 32.9 \nString values: Hello world \n";
+		EXPECT_STREQ(expected, result.c_str());
+	}
+
+}
 

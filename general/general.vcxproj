@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="..\includes\crtp.h" />
     <ClInclude Include="..\includes\ringbuffer.h" />
+    <ClInclude Include="..\includes\sharedpinter.h" />
     <ClInclude Include="..\includes\templates.h" />
     <ClInclude Include="..\includes\typeerasure.h" />
     <ClInclude Include="framework.h" />
@@ -164,6 +165,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="sharedpointer.cpp" />
     <ClCompile Include="typeerasure.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
