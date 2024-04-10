@@ -5,6 +5,7 @@
 #include <map>
 #include <functional>
 #include <sstream>
+#include <utility>
 
 #include "templates.h"
 #include "typeerasure.h"
@@ -12,12 +13,22 @@
 #include "crtp.h"
 #include "sharedpinter.h"
 
+#include "hackerrank.h"
+
+#include "general.h"
+
 using std::cout;
 using std::endl;
 using std::string;
 using std::map;
 using std::function;
 using std::stringstream;
+using std::pair;
+
+TEST(General, General)
+{
+	general();
+}
 
 TEST(General, IsSame)
 {
@@ -562,3 +573,14 @@ TEST(General, TemplateConcept1)
 
 }
 
+TEST(General, HackerrankBitArray)
+{
+	using namespace Hackerrank::BitArray;
+
+	int ret;
+	testing::internal::CaptureStdout();
+	ret = BitArray(3, 1, 1, 1);
+	string result = testing::internal::GetCapturedStdout();
+	char expected[] = "3";
+	EXPECT_STREQ(expected, result.c_str());
+}

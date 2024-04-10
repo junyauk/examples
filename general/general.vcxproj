@@ -150,6 +150,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\crtp.h" />
+    <ClInclude Include="..\includes\general.h" />
+    <ClInclude Include="..\includes\hackerrank.h" />
     <ClInclude Include="..\includes\ringbuffer.h" />
     <ClInclude Include="..\includes\sharedpinter.h" />
     <ClInclude Include="..\includes\templates.h" />
@@ -159,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="general.cpp" />
+    <ClCompile Include="hackerrank.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -151,15 +151,26 @@
   <ItemGroup>
     <ClInclude Include="..\includes\abstractfactory.h" />
     <ClInclude Include="..\includes\adapter.h" />
+    <ClInclude Include="..\includes\bridge.h" />
     <ClInclude Include="..\includes\builder.h" />
+    <ClInclude Include="..\includes\chainofresponsibility.h" />
     <ClInclude Include="..\includes\command.h" />
     <ClInclude Include="..\includes\composite.h" />
+    <ClInclude Include="..\includes\decorator.h" />
+    <ClInclude Include="..\includes\facade.h" />
     <ClInclude Include="..\includes\factorymethod.h" />
+    <ClInclude Include="..\includes\flyweight.h" />
+    <ClInclude Include="..\includes\interpreter.h" />
     <ClInclude Include="..\includes\iterator.h" />
+    <ClInclude Include="..\includes\mediator.h" />
+    <ClInclude Include="..\includes\memento.h" />
     <ClInclude Include="..\includes\observer.h" />
     <ClInclude Include="..\includes\prototype.h" />
+    <ClInclude Include="..\includes\proxy.h" />
     <ClInclude Include="..\includes\singleton.h" />
+    <ClInclude Include="..\includes\state.h" />
     <ClInclude Include="..\includes\strategy.h" />
+    <ClInclude Include="..\includes\templatemethod.h" />
     <ClInclude Include="..\includes\visitor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -167,11 +178,19 @@
   <ItemGroup>
     <ClCompile Include="abstractfactory.cpp" />
     <ClCompile Include="adapter.cpp" />
+    <ClCompile Include="bridge.cpp" />
     <ClCompile Include="builder.cpp" />
+    <ClCompile Include="chainofresponsibility.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="composite.cpp" />
+    <ClCompile Include="decorator.cpp" />
+    <ClCompile Include="facade.cpp" />
     <ClCompile Include="factorymethod.cpp" />
+    <ClCompile Include="flyweight.cpp" />
+    <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="iterator.cpp" />
+    <ClCompile Include="mediator.cpp" />
+    <ClCompile Include="memento.cpp" />
     <ClCompile Include="observer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -180,9 +199,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="prototype.cpp" />
+    <ClCompile Include="proxy.cpp" />
     <ClCompile Include="singleton.cpp" />
+    <ClCompile Include="state.cpp" />
     <ClCompile Include="sthread.cpp" />
     <ClCompile Include="strategy.cpp" />
+    <ClCompile Include="templatemethod.cpp" />
     <ClCompile Include="visitor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

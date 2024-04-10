@@ -1,10 +1,20 @@
-﻿// general.cpp : スタティック ライブラリ用の関数を定義します。
-//
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "framework.h"
 
-// TODO: これは、ライブラリ関数の例です
-void fngeneral()
+#include <iostream>
+#include <sstream>
+#include <unordered_map>
+#include <string>
+#include <numeric>
+#include <algorithm>
+#include <iterator>
+#include <map>
+
+using namespace std;
+
+
+void general()
 {
+	// This is used for running simple programs for debugging.
 }
+

@@ -19,6 +19,9 @@
 #include "leaderfollower.h"
 #include "monitorobject.h"
 #include "reactor.h"
+#include "readerwriter.h"
+#include "barrier.h"
+#include "threadpool.h"
 
 // Note:
 // These tests are for testing multi thread examples
@@ -128,4 +131,49 @@ TEST(MultiThread, MonitorObject)
 TEST(MultiThread, Reactor)
 {
 	EXPECT_NO_THROW(Run_Reactor());
+}
+
+TEST(MultiThread, ReaderWriterBasic1)
+{
+	using namespace ReaderWriter::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ReaderWriterBasic1Step2)
+{
+	using namespace ReaderWriter::Basic1Step2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, BarrierBasic1)
+{
+	using namespace Barrier::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, BarrierBasic2)
+{
+	using namespace Barrier::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ThreadPoolBasic1)
+{
+	using namespace ThreadPool::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
 }

@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="..\includes\activeobject.h" />
     <ClInclude Include="..\includes\balking.h" />
+    <ClInclude Include="..\includes\barrier.h" />
     <ClInclude Include="..\includes\basic.h" />
     <ClInclude Include="..\includes\conditionvariableexample.h" />
     <ClInclude Include="..\includes\doublecheckedlocking.h" />
@@ -163,9 +164,11 @@
     <ClInclude Include="..\includes\multithreadsum.h" />
     <ClInclude Include="..\includes\producerconsumer.h" />
     <ClInclude Include="..\includes\reactor.h" />
+    <ClInclude Include="..\includes\readerwriter.h" />
     <ClInclude Include="..\includes\readlockwritelock.h" />
     <ClInclude Include="..\includes\singlethreadexecution.h" />
     <ClInclude Include="..\includes\threadpermessage.h" />
+    <ClInclude Include="..\includes\threadpool.h" />
     <ClInclude Include="..\includes\threadspecificstorage.h" />
     <ClInclude Include="..\includes\twophasetermination.h" />
     <ClInclude Include="..\includes\workerthread.h" />
@@ -175,6 +178,7 @@
   <ItemGroup>
     <ClCompile Include="activeobject.cpp" />
     <ClCompile Include="balking.cpp" />
+    <ClCompile Include="barrier.cpp" />
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="conditionvariableexample.cpp" />
     <ClCompile Include="doublecheckedlocking.cpp" />
@@ -193,9 +197,11 @@
     </ClCompile>
     <ClCompile Include="producerconsumer.cpp" />
     <ClCompile Include="reactor.cpp" />
+    <ClCompile Include="readerwriter.cpp" />
     <ClCompile Include="readlockwritelock.cpp" />
     <ClCompile Include="singlethreadexecution.cpp" />
     <ClCompile Include="threadpermessage.cpp" />
+    <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="threadspecificstorage.cpp" />
     <ClCompile Include="twophasetermination.cpp" />
     <ClCompile Include="workerthread.cpp" />
