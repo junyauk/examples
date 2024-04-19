@@ -1,24 +1,14 @@
 #include "pch.h"
+#include "threadspecificstorage.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <cassert>
+#include <chrono>
 
-using std::cout;
-using std::endl;
-using std::string;
-using std::stringstream;
-using std::to_string;
-using std::vector;
-using std::thread;
-using std::mutex;
+
 using std::lock_guard;
 using std::unique_lock;
-
+using std::chrono::milliseconds;
+using std::chrono::seconds;
+using std::this_thread::sleep_for;
 
 namespace Example1
 {
@@ -75,3 +65,82 @@ int Run_ThreadSpecificStorage()
 
 	return 0;
 }
+
+namespace ThreadSpecificStorage::FactoryMethod::Basic1
+{
+	// Static members
+	mutex SafeOut::m_mutex;
+
+	void threadFunc(ThreadLocal& thl, int id)
+	{
+		unique_ptr<MyObject> obj = thl.get() ? std::move(thl.get()->clone()) : MyObjectFactory::createObject(id);
+		thl.set(std::move(obj));
+		thl.get()->print();
+	}
+
+	int Tests::run()
+	{
+		constexpr int NUM_THREADS = 5;
+		thread threads[NUM_THREADS];
+		ThreadLocal thl;
+
+		for (auto i = 0; i < NUM_THREADS; ++i)
+		{
+			threads[i] = thread(threadFunc, std::ref(thl), i+1);
+		}
+
+		sleep_for(seconds(1));
+
+		for (auto& t : threads)
+		{
+			if (t.joinable())
+			{
+				t.join();
+			}
+		}
+		return 0;
+	}
+
+
+}
+
+
+namespace ThreadSpecificStorage::FactoryMethod::Basic2
+{
+	void threadFunc(ThreadLocal& thl, int id)
+	{
+		unique_ptr<Logger> logger = thl.get() ? std::move(thl.get()->clone()) : LoggerFactory::createLogger(id);
+		thl.set(std::move(logger));
+
+		Logger* loggerPtr = thl.get();
+		if (loggerPtr)
+		{
+			loggerPtr->log("Thread " + std::to_string(id) + " is logging.");
+		}
+	}
+
+	int Tests::run()
+	{
+		constexpr int NUM_THREADS = 5;
+		thread threads[NUM_THREADS];
+		ThreadLocal thl;
+
+		// Create and start threads
+		for (auto i = 0; i < NUM_THREADS; ++i)
+		{
+			threads[i] = thread(threadFunc, std::ref(thl), i + 1);
+		}
+
+		for (auto& t : threads)
+		{
+			if (t.joinable())
+			{
+				t.join();
+			}
+		}
+
+		return 0;
+	}
+
+}
+

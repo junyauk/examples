@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 void general()
 {
 	// This is used for running simple programs for debugging.

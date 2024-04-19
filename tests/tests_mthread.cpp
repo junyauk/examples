@@ -177,3 +177,67 @@ TEST(MultiThread, ThreadPoolBasic1)
 	EXPECT_NO_THROW(ret = tests.run());
 	EXPECT_EQ(ret, 0);
 }
+
+TEST(MultiThread, ThreadPoolProducerConsumer)
+{
+	using namespace ThreadPool::ProducerConsumer;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ThreadPoolStrategy)
+{
+	using namespace ThreadPool::Strategy;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, MultiThreadObserver)
+{
+	using namespace MultiThread::Observer;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ReadLockWriteLockSingletonBasic1)
+{
+	using namespace ReadLockWriteLock::Singleton::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ReadLockWriteLockSingletonBasic2)
+{
+	using namespace ReadLockWriteLock::Singleton::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ThreadSpecificStorageFactoryMethodBasic1)
+{
+	using namespace ThreadSpecificStorage::FactoryMethod::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ThreadSpecificStorageFactoryMethodBasic2)
+{
+	using namespace ThreadSpecificStorage::FactoryMethod::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
