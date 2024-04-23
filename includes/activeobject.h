@@ -23,7 +23,84 @@ using std::make_shared;
 using std::packaged_task;
 using std::future;
 
-int Run_ActiveObject();
+namespace ActiveObject::Example1
+{
+	// a class that represents an active object
+	class ActiveObject
+	{
+	public:
+		// a constructor that creates and starts a worker thread
+		ActiveObject();
+		// a destructor that stops the worker thread
+		~ActiveObject();
+
+		// a method that performs some work
+		void doWork(int x);
+
+		// a method that enqueue a request to the scheduler
+		void enqueueWork(int x);
+
+	private:
+		// a method that enqueue a message to the queue
+		void enqueue(function<void()> msg);
+		// a method that dequeues a message from the queue
+		function<void()> dequeue();
+		// a method that runs the scheduler loop
+		void run();
+
+		queue<function<void()>>	m_messages;	// a queue of messages
+		mutex	m_mutex;	// a mutex to protect the queue
+		c_v	m_cv;	// a condition variable to signal the worker thread
+		bool	m_done = false;	// a flag to indicate the active object is done
+		thread	m_worker;	// a worker thread that executes the messages
+	};
+
+}
+
+namespace ActiveObject::Example2
+{
+	// a class that represents active object
+	class ActiveObject
+	{
+	public:
+		ActiveObject();
+		~ActiveObject();
+
+		int compute(int x);
+		future<int>	enqueueCompute(int x);
+	private:
+		void enqueue(function<void()> msg);
+		function<void()> dequeue();
+
+		// this is the thread that processes tasks in the queue of Active Object.
+		void run();
+
+		queue<function<void()>>	m_messages;
+		mutex	m_mutex;
+		c_v		m_cv;
+		bool	m_done;
+		thread	m_worker;
+	};
+}
+
+namespace ActiveObject::Example3
+{
+	class ActiveObject
+	{
+	public:
+		ActiveObject();
+		~ActiveObject();
+		void enqueue(function<void()> func);
+	private:
+		void run();
+
+		queue<function<void()>> m_queue;
+		mutex m_mutex;	// Only one thread runs
+		c_v	m_cv;		// waiting for something is queued
+		bool m_stop;	// a flag for terminating
+		thread	m_thread;
+	};
+}
 
 namespace ActiveObject::Basic1
 {

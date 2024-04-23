@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="tests.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="tests_crtp.cpp" />
+    <ClCompile Include="tests_general.cpp" />
+    <ClCompile Include="tests_mthread.cpp" />
+    <ClCompile Include="tests_sthread.cpp" />
+    <ClCompile Include="tests_zenn.cpp" />
+    <ClCompile Include="..\mthread\tests_activeobject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\includes\tests_activeobject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\tests.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{4f8f1c41-b8cd-444a-8c81-dd4286306708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{20249b7d-bf98-4bfc-aeae-1ab22b85f54a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

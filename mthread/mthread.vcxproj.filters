@@ -1,168 +1,164 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
+    <Filter Include="sources">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
+    <Filter Include="headers">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\multithreadsum.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\singlethreadexecution.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\immutable.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\conditionvariableexample.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\futurepromise.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\producerconsumer.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\basic.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\readlockwritelock.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\balking.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\threadpermessage.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\workerthread.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\twophasetermination.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\threadspecificstorage.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\activeobject.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\doublecheckedlocking.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\guardedsuspension.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\halfsynchalfasync.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\leaderfollower.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\monitorobject.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\reactor.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\readerwriter.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\barrier.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\threadpool.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="multithreadsum.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="singlethreadexecution.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="immutable.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="conditionvariableexample.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="futurepromise.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="balking.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="producerconsumer.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="basic.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="readlockwritelock.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="threadpermessage.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="workerthread.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="twophasetermination.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="activeobject.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="doublecheckedlocking.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="threadspecificstorage.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="guardedsuspension.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="halfsynchalfasync.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="leaderfollower.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="monitorobject.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="reactor.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="readerwriter.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="barrier.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="threadpool.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

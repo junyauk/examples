@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <gtest/gtest.h>
 
 #include "activeobject.h"
 #include "basic.h"
@@ -23,10 +24,46 @@
 #include "barrier.h"
 #include "threadpool.h"
 
+#include "tests.h"
+#include "tests_activeobject.h"
 // Note:
 // These tests are for testing multi thread examples
 // They should be called with various conditions originally.
 // But currently only runs basic ones, will be tested with various conditions
+
+
+class MultiThreadTests : public ::testing::TestWithParam<vector<shared_ptr<ITest>>>
+{
+protected:
+	void SetUp() override {
+		tests = GetParam();
+	}
+
+	int run() {
+		for (const auto& test : tests) {
+			test->run();
+		}
+		return 0; // Return success
+	}
+
+private:
+	vector<shared_ptr<ITest>> tests;
+};
+
+// Define a static std::vector<std::shared_ptr<ITest>> named testInstances
+static std::vector<std::shared_ptr<ITest>> testInstances =
+{ 
+	std::make_shared<ActiveObject::Example1::Test>(),
+	std::make_shared<ActiveObject::Example2::Test>(),
+	std::make_shared<ActiveObject::Example3::Test>()
+};
+
+TEST_P(MultiThreadTests, RunTests) {
+	int ret = 0;
+	EXPECT_NO_THROW(ret = run());
+	EXPECT_EQ(ret, 0);
+}
+
 
 TEST(MultiThread, Basic)
 {
