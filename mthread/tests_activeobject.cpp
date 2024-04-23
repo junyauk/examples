@@ -5,7 +5,7 @@
 
 namespace ActiveObject::Example1
 {
-	int Test::run()
+	int Tests::run()
 	{
 		// create an active object
 		ActiveObject	ao;
@@ -25,7 +25,7 @@ namespace ActiveObject::Example1
 
 namespace ActiveObject::Example2
 {
-	int Test::run()
+	int Tests::run()
 	{
 		// create an active object
 		ActiveObject	ao;
@@ -57,7 +57,7 @@ namespace ActiveObject::Example3
 		prom.set_value(ss.str());
 	}
 
-	int Test::run()
+	int Tests::run()
 	{
 		// This example of Active Object uses promise and future classes
 		// The thread run by Active Object will set results to the promises

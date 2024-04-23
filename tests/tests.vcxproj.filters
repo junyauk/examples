@@ -11,6 +11,9 @@
     <ClCompile Include="..\mthread\tests_activeobject.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\mthread\tests_threadpool.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -18,6 +21,9 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\tests.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\tests_threadpool.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

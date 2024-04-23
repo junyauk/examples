@@ -1,6 +1,7 @@
 #pragma once
 #ifndef THREADPOOL_H_INCLUDED
 #define THREADPOOL_H_INCLUDED
+#include "Windows.h"
 
 #include <iostream>
 #include <string>
@@ -11,6 +12,8 @@
 #include <thread>
 #include <condition_variable>
 #include <chrono>
+
+#include "tests.h"
 
 using std::cout;
 using std::endl;
@@ -33,79 +36,20 @@ namespace ThreadPool::Basic1
 	class ThreadPool
 	{
 	public:
-		ThreadPool(int numThreads)
-			: m_stop(false)
-		{
-			for (auto i = 0; i < numThreads; ++i)
-			{
-				m_threads.emplace_back(std::move(thread(&ThreadPool::processTask, this)));
-			}
-		}
+		ThreadPool(int numThreads);
+		~ThreadPool();
 
-		~ThreadPool()
-		{
-			stop();
-			m_cv.notify_all(); // Let threads know they needs to exit
-			for (auto& t : m_threads)
-			{
-				if (t.joinable())
-				{
-					t.join();
-				}
-			}
-		}
-
-		void enqueueTask(function<void()> task)
-		{
-			{
-				unique_lock<mutex> ul(m_mutex);
-				m_cv.wait(ul, [this] {return m_stop || m_tasks.size() < MAX_QUEUE_SIZE; });
-				if (m_stop)
-				{
-					return;
-				}
-				m_tasks.push(task);
-			}
-			m_cv.notify_one(); // Let threads know one task was pushed.
-		}
-		void stop()
-		{
-			unique_lock<mutex> ul(m_mutex);
-			m_stop = true;
-		}
+		void enqueueTask(function<void()> task);
+		void stop();
 
 	private:
-		void processTask()
-		{
-			while (true)
-			{
-				function<void()> task;
-				{
-					unique_lock<mutex> ul(m_mutex);
-					m_cv.wait(ul, [this] {return m_stop || !m_tasks.empty(); });
-					if (m_stop)
-					{
-						return;
-					}
-					task = m_tasks.front();
-					m_tasks.pop();
-				}
-				m_cv.notify_all(); // let other threads know a task was popped.
-				task();
-			}
-		}
+		void processTask();
 
 		bool m_stop;
 		mutex m_mutex;
 		cv m_cv;
 		vector<thread>	m_threads;
 		queue < function<void()>> m_tasks;
-	};
-
-	class Tests
-	{
-	public:
-		int run();
 	};
 
 }
@@ -189,12 +133,6 @@ namespace ThreadPool::ProducerConsumer
 		queue< function<void()>> m_queue;
 		vector<thread> m_threads;
 	};
-
-	class Tests
-	{
-	public:
-		int run();
-	};
 }
 
 namespace ThreadPool::Strategy
@@ -220,62 +158,12 @@ namespace ThreadPool::Strategy
 	class MultiThreadExecution : public ExecutionStrategy
 	{
 	public:
-		MultiThreadExecution()
-		{
-			for (auto i = 0; i < MAX_QUEUE_SIZE; ++i)
-			{
-				m_threads.emplace_back(&MultiThreadExecution::threadFunc, this);
-			}
-		}
-		~MultiThreadExecution()
-		{
-			stop();
-			m_cv.notify_all();
-
-			for (auto& t : m_threads)
-			{
-				if (t.joinable())
-				{
-					t.join();
-				}
-			}
-		}
-		virtual void execute(function<void()> task) override
-		{
-			{
-				unique_lock<mutex> ul(m_mutex);
-				m_tasks.emplace(std::move(task));
-			}
-			m_cv.notify_one();
-		}
-
-		void stop()
-		{
-			unique_lock<mutex> ul(m_mutex);
-			m_exit = true;
-		}
-
-
+		MultiThreadExecution();
+		~MultiThreadExecution();
+		virtual void execute(function<void()> task) override;
+		void stop();
 	private:
-		void threadFunc()
-		{
-			while (true)
-			{
-				function<void()> task;
-				{
-					unique_lock<mutex> ul(m_mutex);
-					m_cv.wait(ul, [this] {return m_exit || !m_tasks.empty(); });
-					if (m_exit && m_tasks.empty())
-					{
-						return;
-					}
-					task = m_tasks.front();
-					m_tasks.pop();
-				}
-				m_cv.notify_all();
-				task();
-			}
-		}
+		void threadFunc();
 
 		bool m_exit{ false };
 		mutex m_mutex;
@@ -283,14 +171,20 @@ namespace ThreadPool::Strategy
 		queue<function<void()>> m_tasks;
 		vector<thread> m_threads;
 	};
-
-	class Tests
-	{
-	public:
-		int run();
-	};
 }
 
+namespace ThreadPool::Windows1
+{
+	VOID CALLBACK PrintEvenNumbers(
+		PTP_CALLBACK_INSTANCE instance,
+		PVOID context,
+		PTP_WORK work);
+
+	VOID CALLBACK PrintOddNumbers(
+		PTP_CALLBACK_INSTANCE instance,
+		PVOID context,
+		PTP_WORK work);
+}
 
 #endif // THREADPOOL_H_INCLUDED
 

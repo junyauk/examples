@@ -104,10 +104,12 @@
   <ItemGroup>
     <ClInclude Include="..\includes\tests.h" />
     <ClInclude Include="..\includes\tests_activeobject.h" />
+    <ClInclude Include="..\includes\tests_threadpool.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mthread\tests_activeobject.cpp" />
+    <ClCompile Include="..\mthread\tests_threadpool.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

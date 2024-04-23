@@ -26,43 +26,11 @@
 
 #include "tests.h"
 #include "tests_activeobject.h"
+#include "tests_threadpool.h"
 // Note:
 // These tests are for testing multi thread examples
 // They should be called with various conditions originally.
 // But currently only runs basic ones, will be tested with various conditions
-
-
-class MultiThreadTests : public ::testing::TestWithParam<vector<shared_ptr<ITest>>>
-{
-protected:
-	void SetUp() override {
-		tests = GetParam();
-	}
-
-	int run() {
-		for (const auto& test : tests) {
-			test->run();
-		}
-		return 0; // Return success
-	}
-
-private:
-	vector<shared_ptr<ITest>> tests;
-};
-
-// Define a static std::vector<std::shared_ptr<ITest>> named testInstances
-static std::vector<std::shared_ptr<ITest>> testInstances =
-{ 
-	std::make_shared<ActiveObject::Example1::Test>(),
-	std::make_shared<ActiveObject::Example2::Test>(),
-	std::make_shared<ActiveObject::Example3::Test>()
-};
-
-TEST_P(MultiThreadTests, RunTests) {
-	int ret = 0;
-	EXPECT_NO_THROW(ret = run());
-	EXPECT_EQ(ret, 0);
-}
 
 
 TEST(MultiThread, Basic)
@@ -128,6 +96,27 @@ TEST(MultiThread, TwoPhaseTermination)
 TEST(MultiThread, ThreadSpecificStorage)
 {
 	EXPECT_NO_THROW(Run_ThreadSpecificStorage());
+}
+
+TEST(MultiThread, ActiveObjectExample1)
+{
+	using namespace ActiveObject::Example1;
+	Tests tests;
+	EXPECT_NO_THROW(tests.run());
+}
+
+TEST(MultiThread, ActiveObjectExample2)
+{
+	using namespace ActiveObject::Example2;
+	Tests tests;
+	EXPECT_NO_THROW(tests.run());
+}
+
+TEST(MultiThread, ActiveObjectExample3)
+{
+	using namespace ActiveObject::Example3;
+	Tests tests;
+	EXPECT_NO_THROW(tests.run());
 }
 
 TEST(MultiThread, ActiveObjectBasic1)
@@ -277,4 +266,6 @@ TEST(MultiThread, ThreadSpecificStorageFactoryMethodBasic2)
 	EXPECT_NO_THROW(ret = tests.run());
 	EXPECT_EQ(ret, 0);
 }
+
+
 

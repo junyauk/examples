@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Windows.h"
 
 #include <sstream>
 #include <memory>
@@ -10,147 +11,159 @@ using std::make_unique;
 
 namespace ThreadPool::Basic1
 {
-	int Tests::run()
+	ThreadPool::ThreadPool(int numThreads)
+		: m_stop(false)
 	{
-		ThreadPool	threadPool(4);
-
-		for (auto i = 0; i < 50; ++i)
+		for (auto i = 0; i < numThreads; ++i)
 		{
-			threadPool.enqueueTask([i]()
-				{
-					stringstream ss;
-					ss << "Task: " << i << " processed by Thread: " << std::this_thread::get_id() << endl;
-					cout << ss.str();
-				});
+			m_threads.emplace_back(std::move(thread(&ThreadPool::processTask, this)));
 		}
-
-		sleep_for(seconds(5));
-
-		return 0;
 	}
+
+	ThreadPool::~ThreadPool()
+	{
+		stop();
+		m_cv.notify_all(); // Let threads know they needs to exit
+		for (auto& t : m_threads)
+		{
+			if (t.joinable())
+			{
+				t.join();
+			}
+		}
+	}
+
+	void ThreadPool::enqueueTask(function<void()> task)
+	{
+		{
+			unique_lock<mutex> ul(m_mutex);
+			m_cv.wait(ul, [this] {return m_stop || m_tasks.size() < MAX_QUEUE_SIZE; });
+			if (m_stop)
+			{
+				return;
+			}
+			m_tasks.push(task);
+		}
+		m_cv.notify_one(); // Let threads know one task was pushed.
+	}
+	void ThreadPool::stop()
+	{
+		unique_lock<mutex> ul(m_mutex);
+		m_stop = true;
+	}
+
+	void ThreadPool::processTask()
+	{
+		while (true)
+		{
+			function<void()> task;
+			{
+				unique_lock<mutex> ul(m_mutex);
+				m_cv.wait(ul, [this] {return m_stop || !m_tasks.empty(); });
+				if (m_stop)
+				{
+					return;
+				}
+				task = m_tasks.front();
+				m_tasks.pop();
+			}
+			m_cv.notify_all(); // let other threads know a task was popped.
+			task();
+		}
+	}
+
 }
 
 namespace ThreadPool::ProducerConsumer
 {
-	class SafeOut
-	{
-	public:
-		void out(const string str)
-		{
-			unique_lock<mutex> ul(m_mutex);
-			cout << str;
-		}
-	private:
-		mutex m_mutex;
-	};
-
-	class Task
-	{
-	public:
-		Task(int id) : m_id(id) {}
-		void process()
-		{
-			static SafeOut out;
-			stringstream ss;
-			ss << "Task: " << m_id << " was processed by thread ID: " << std::this_thread::get_id() << endl;
-			out.out(ss.str());
-		}
-	private:
-		int m_id;
-	};
-
-	class Request
-	{
-	public:
-		Task produce()
-		{
-			return ++m_id;
-		}
-	private:
-		int m_id{ 0 };
-	};
-
-	class WebServer
-	{
-	public:
-		void processRequest(Task&& task)
-		{
-			// setting the Task::process with the moved instance
-			m_threadPool.enqueueTask(std::bind(&Task::process, std::move(task)));
-		}
-		void stop()
-		{
-			m_threadPool.stop();
-		}
-	private:
-
-		ThreadPool m_threadPool{ 5 };
-	};
-
-	int Tests::run()
-	{
-		WebServer webServer;
-		Request	request;
-
-		for (auto i = 0; i < 20; ++i)
-		{
-			webServer.processRequest(request.produce());
-		}
-
-		sleep_for(seconds(5));
-
-		webServer.stop();
-
-		return 0;
-	}
+	// The class is defined in threadpool.h
 }
 
 namespace ThreadPool::Strategy
 {
-	class SafeOut
+	MultiThreadExecution::MultiThreadExecution()
 	{
-	public:
-		void out(const string str)
+		for (auto i = 0; i < MAX_QUEUE_SIZE; ++i)
 		{
-			unique_lock<mutex> ul(m_mutex);
-			cout << str;
+			m_threads.emplace_back(&MultiThreadExecution::threadFunc, this);
 		}
-	private:
-		mutex m_mutex;
-	};
-
-	int Tests::run()
+	}
+	MultiThreadExecution::~MultiThreadExecution()
 	{
-		unique_ptr<ExecutionStrategy> strategy;
+		stop();
+		m_cv.notify_all();
 
-		// in the case of using single-threading
+		for (auto& t : m_threads)
 		{
-			strategy = make_unique<SingleThreadExecution>();
-			strategy->execute([]()
-				{
-					static SafeOut sout;
-					sout.out("Single Task\n");
-				});
-		}
-
-		// in the case of using Multi-threading
-		{
-			strategy = make_unique<MultiThreadExecution>();
-			for (auto i = 0; i < 10; ++i)
+			if (t.joinable())
 			{
-				strategy->execute([i]()
-					{
-						static SafeOut sout;
-						stringstream ss;
-						ss << "Task: " << i << " is being executed by thread: " << std::this_thread::get_id() << endl;
-						sout.out(ss.str());
-						sleep_for(milliseconds(100));
-					});
+				t.join();
 			}
 		}
+	}
 
-		sleep_for(seconds(1));
+	void MultiThreadExecution::execute(function<void()> task)
+	{
+		{
+			unique_lock<mutex> ul(m_mutex);
+			m_tasks.emplace(std::move(task));
+		}
+		m_cv.notify_one();
+	}
 
-		return 0;
+	void MultiThreadExecution::stop()
+	{
+		unique_lock<mutex> ul(m_mutex);
+		m_exit = true;
+	}
+
+	void MultiThreadExecution::threadFunc()
+	{
+		while (true)
+		{
+			function<void()> task;
+			{
+				unique_lock<mutex> ul(m_mutex);
+				m_cv.wait(ul, [this] {return m_exit || !m_tasks.empty(); });
+				if (m_exit && m_tasks.empty())
+				{
+					return;
+				}
+				task = m_tasks.front();
+				m_tasks.pop();
+			}
+			m_cv.notify_all();
+			task();
+		}
 	}
 }
+
+namespace ThreadPool::Windows1
+{
+	VOID CALLBACK PrintEvenNumbers(
+		PTP_CALLBACK_INSTANCE instance,
+		PVOID context,
+		PTP_WORK work)
+	{
+		for (auto i = 0; i < 10; i += 2)
+		{
+			cout << "Even: " << i << endl;
+			Sleep(500);
+		}
+	}
+
+	VOID CALLBACK PrintOddNumbers(
+		PTP_CALLBACK_INSTANCE instance,
+		PVOID context,
+		PTP_WORK work)
+	{
+		for (auto i = 1; i < 10; i += 2)
+		{
+			cout << "Odd: " << i << endl;
+			Sleep(500);
+		}
+	}
+
+}
+
+
