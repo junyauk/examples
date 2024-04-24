@@ -27,6 +27,8 @@
 #include "tests.h"
 #include "tests_activeobject.h"
 #include "tests_threadpool.h"
+#include "tests_jobobject.h"
+
 // Note:
 // These tests are for testing multi thread examples
 // They should be called with various conditions originally.
@@ -222,6 +224,15 @@ TEST(MultiThread, ThreadPoolStrategy)
 	EXPECT_EQ(ret, 0);
 }
 
+TEST(MultiThread, ThreadPoolWindows1)
+{
+	using namespace ThreadPool::Windows1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
 TEST(MultiThread, MultiThreadObserver)
 {
 	using namespace MultiThread::Observer;
@@ -267,5 +278,11 @@ TEST(MultiThread, ThreadSpecificStorageFactoryMethodBasic2)
 	EXPECT_EQ(ret, 0);
 }
 
-
-
+TEST(MultiThread, JobObjectWindows1)
+{
+	using namespace JobObject::Windows1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}

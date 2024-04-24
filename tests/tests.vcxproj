@@ -104,11 +104,13 @@
   <ItemGroup>
     <ClInclude Include="..\includes\tests.h" />
     <ClInclude Include="..\includes\tests_activeobject.h" />
+    <ClInclude Include="..\includes\tests_jobobject.h" />
     <ClInclude Include="..\includes\tests_threadpool.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mthread\tests_activeobject.cpp" />
+    <ClCompile Include="..\mthread\tests_jobobject.cpp" />
     <ClCompile Include="..\mthread\tests_threadpool.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="pch.cpp">
@@ -141,6 +143,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="emptyprocess.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

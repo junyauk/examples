@@ -14,6 +14,9 @@
     <ClCompile Include="..\mthread\tests_threadpool.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\mthread\tests_jobobject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -26,9 +29,13 @@
     <ClInclude Include="..\includes\tests_threadpool.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\tests_jobobject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="emptyprocess.bat" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="headers">

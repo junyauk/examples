@@ -11,10 +11,13 @@
 #include <memory>
 #include <future>
 
+#include "general.h"
 
 using std::cout;
 using std::endl;
+using std::cerr;
 using std::string;
+using std::to_string;
 using std::stringstream;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
@@ -40,3 +43,5 @@ public:
 	virtual int run() = 0;
 };
 
+
+wstring GetTestFolderPath();

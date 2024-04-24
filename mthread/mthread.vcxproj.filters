@@ -86,6 +86,9 @@
     <ClInclude Include="..\includes\threadpool.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\jobobject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="multithreadsum.cpp">
@@ -158,6 +161,9 @@
       <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="threadpool.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="jobobject.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,7 +3,10 @@
 
 #include <sstream>
 #include <memory>
+
+#include "general.h"
 #include "threadpool.h"
+
 
 using std::stringstream;
 using std::unique_ptr;
@@ -147,7 +150,9 @@ namespace ThreadPool::Windows1
 	{
 		for (auto i = 0; i < 10; i += 2)
 		{
-			cout << "Even: " << i << endl;
+			stringstream ss;
+			ss << "Even: " << i << endl;
+			ThreadSafeOut::print(ss.str());
 			Sleep(500);
 		}
 	}
@@ -159,7 +164,9 @@ namespace ThreadPool::Windows1
 	{
 		for (auto i = 1; i < 10; i += 2)
 		{
-			cout << "Odd: " << i << endl;
+			stringstream ss;
+			ss << "Odd: " << i << endl;
+			ThreadSafeOut::print(ss.str());
 			Sleep(500);
 		}
 	}

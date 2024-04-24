@@ -159,6 +159,7 @@
     <ClInclude Include="..\includes\guardedsuspension.h" />
     <ClInclude Include="..\includes\halfsynchalfasync.h" />
     <ClInclude Include="..\includes\immutable.h" />
+    <ClInclude Include="..\includes\jobobject.h" />
     <ClInclude Include="..\includes\leaderfollower.h" />
     <ClInclude Include="..\includes\monitorobject.h" />
     <ClInclude Include="..\includes\multithreadsum.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="guardedsuspension.cpp" />
     <ClCompile Include="halfsynchalfasync.cpp" />
     <ClCompile Include="immutable.cpp" />
+    <ClCompile Include="jobobject.cpp" />
     <ClCompile Include="leaderfollower.cpp" />
     <ClCompile Include="monitorobject.cpp" />
     <ClCompile Include="multithreadsum.cpp" />

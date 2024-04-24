@@ -154,19 +154,12 @@ namespace ThreadPool::Windows1
 		CloseThreadpoolWork(workE);
 		CloseThreadpoolWork(workO);
 		CloseThreadpoolCleanupGroupMembers(pCleanupGroup, FALSE, NULL);
-		CloseThreadpoolCleanupGroup(pCleanupGroup);
-		CloseThreadpoolCleanupGroupMembers(pCleanupGroup, TRUE, NULL);
-		CloseThreadpoolCleanupGroup(pCleanupGroup);
-		CloseThreadpoolCleanupGroupMembers(pCleanupGroup, FALSE, NULL);
-		CloseThreadpoolCleanupGroup(pCleanupGroup);
-		CloseThreadpoolCleanupGroupMembers(pCleanupGroup, TRUE, NULL);
+
+		// Destroy the cleanup group
 		CloseThreadpoolCleanupGroup(pCleanupGroup);
 
 		// Destroy the thread pool
 		CloseThreadpool(pool);
-
-		// Destroy the cleanup group
-		CloseThreadpoolCleanupGroup(pCleanupGroup);
 
 		return 0;
 	}
