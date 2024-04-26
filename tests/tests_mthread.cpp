@@ -9,7 +9,6 @@
 #include "guardedsuspension.h"
 #include "conditionvariableexample.h"
 #include "futurepromise.h"
-#include "producerconsumer.h"
 #include "readlockwritelock.h"
 #include "threadpermessage.h"
 #include "threadspecificstorage.h"
@@ -28,6 +27,7 @@
 #include "tests_activeobject.h"
 #include "tests_threadpool.h"
 #include "tests_jobobject.h"
+#include "tests_producerconsumer.h"
 
 // Note:
 // These tests are for testing multi thread examples
@@ -70,11 +70,48 @@ TEST(MultiThread, FuturePromise)
 	EXPECT_NO_THROW(Run_FuturePromise());
 }
 
+TEST(MultiThread, ProducerConsumerBasic1)
+{
+	using namespace ProducerConsumer::Basic1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ProducerConsumerBasic2)
+{
+	using namespace ProducerConsumer::Basic2;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ProducerConsumerPrinter1)
+{
+	using namespace ProducerConsumer::Printer1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(MultiThread, ProducerConsumerTaskQueue)
+{
+	using namespace ProducerConsumer::TaskQueue;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+#if 0
 TEST(MultiThread, ProducerConsumer)
 {
 	EXPECT_NO_THROW(Run_ProducerConsumer());
 }
-
+#endif
 TEST(MultiThread, ReadLockWriteLock)
 {
 	EXPECT_NO_THROW(Run_ReadLockWriteLock());

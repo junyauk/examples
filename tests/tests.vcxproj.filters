@@ -17,6 +17,9 @@
     <ClCompile Include="..\mthread\tests_jobobject.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\mthread\tests_producerconsumer.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -30,6 +33,9 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\tests_jobobject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\tests_producerconsumer.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

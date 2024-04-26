@@ -64,6 +64,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -105,12 +106,14 @@
     <ClInclude Include="..\includes\tests.h" />
     <ClInclude Include="..\includes\tests_activeobject.h" />
     <ClInclude Include="..\includes\tests_jobobject.h" />
+    <ClInclude Include="..\includes\tests_producerconsumer.h" />
     <ClInclude Include="..\includes\tests_threadpool.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mthread\tests_activeobject.cpp" />
     <ClCompile Include="..\mthread\tests_jobobject.cpp" />
+    <ClCompile Include="..\mthread\tests_producerconsumer.cpp" />
     <ClCompile Include="..\mthread\tests_threadpool.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="pch.cpp">

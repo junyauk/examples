@@ -8,17 +8,12 @@
 
 namespace JobObject::Windows1
 {
-
 	static shared_ptr<PROCESS_INFORMATION> CreateEmptyProcess()
 	{
 		STARTUPINFO si = { sizeof(STARTUPINFO) };
 		PROCESS_INFORMATION pi;
 
-		// Get the full path of the executable
-//		TCHAR exePath[MAX_PATH];
-//		GetModuleFileName(NULL, exePath, MAX_PATH);
 		std::wstring batPath = GetTestFolderPath() + L"emptyprocess.bat";
-//		std::wstring batPath = L"..\\tests\\emptyprocess.bat";
 
 		if (!CreateProcess(batPath.c_str(), NULL, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
 		{

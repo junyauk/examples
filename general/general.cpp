@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "framework.h"
 #include "Windows.h"
+#include "rpc.h"
 
 #include <iostream>
 #include <sstream>
@@ -68,4 +69,3 @@ wstring FindFolderInPath(const wstring folderName)
 	cout << "The specified folder was not found.\n";
 	return L"";
 }
-
