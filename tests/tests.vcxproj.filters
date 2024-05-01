@@ -20,6 +20,12 @@
     <ClCompile Include="..\mthread\tests_producerconsumer.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\plugins\plugin1\tests_plugin1.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\general\tests_pluginmanager.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -36,6 +42,12 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\tests_producerconsumer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\tests_plugins.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\tests_pluginmanager.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,4 +40,14 @@ namespace ProducerConsumer::TaskQueue
 	};
 }
 
+namespace ProducerConsumer::Windows1
+{
+	class Tests : public ITest
+	{
+	public:
+		int run();
+	};
+}
+
+
 #endif

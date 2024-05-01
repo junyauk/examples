@@ -60,7 +60,7 @@ namespace ProducerConsumer::Basic1
 			ss << "Producer produced " << item << endl;
 			ThreadSafeOut::print(ss.str());
 			// sleep for a random time
-			sleep_for(milliseconds(50));
+			sleep_for(milliseconds(100));
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace ProducerConsumer::Basic1
 			ss << "Consumer consumed " << item << endl;
 			ThreadSafeOut::print(ss.str());
 			// sleep for a random time
-			sleep_for(milliseconds(100));
+			sleep_for(milliseconds(50));
 		}
 	}
 };
@@ -253,3 +253,33 @@ namespace ProducerConsumer::TaskQueue
 	}
 }
 
+namespace ProducerConsumer::Windows1
+{
+	void Producer::ThreadFunc()
+	{
+		while (!m_stop)
+		{
+			int item = m_random.gen();
+			m_queue->push(item);
+			stringstream ss;
+			ss << "Producer produced " << item << endl;
+			ThreadSafeOut::print(ss.str());
+			// sleep for a random time
+			Sleep(100);
+		}
+	}
+
+	void Consumer::ThreadFunc()
+	{
+		while (!m_stop)
+		{
+			int item = m_queue->pop();
+			stringstream ss;
+			ss << "Consumer consumed " << item << endl;
+			ThreadSafeOut::print(ss.str());
+			// sleep for a random time
+			Sleep(50);
+		}
+	}
+
+}

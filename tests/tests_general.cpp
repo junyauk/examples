@@ -17,6 +17,9 @@
 
 #include "general.h"
 
+#include "tests_plugins.h"
+#include "tests_pluginmanager.h"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -584,3 +587,22 @@ TEST(General, HackerrankBitArray)
 	char expected[] = "3";
 	EXPECT_STREQ(expected, result.c_str());
 }
+
+TEST(Plugin, LoadingPluginTests)
+{
+	using namespace Plugin::LoadingPluginTests;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+
+TEST(Plugin, PluginManager)
+{
+	using namespace Plugin;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
+}
+

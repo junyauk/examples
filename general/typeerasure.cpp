@@ -213,7 +213,7 @@ namespace TypeErasureStep4 // using inheritance
 		template<typename T>
 		struct Derived_ : Base_
 		{
-			T f_;	// Keep the riginal class type information here
+			T f_;	// Keep the original class type information here
 			Derived_(T f) : f_{ std::move(f) }
 			{}
 

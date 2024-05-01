@@ -1,7 +1,8 @@
 #pragma once
 #ifndef GENERAL_H_INCLUDED
 #define GENERAL_H_INCLUDED
-#include "Windows.h"
+#include <Windows.h>
+#include <wincrypt.h>
 
 #include <iostream>
 #include <string>
@@ -18,6 +19,8 @@
 #include <random>
 #include <chrono>
 #include <atomic>
+#include <memory>
+
 
 using std::size_t;
 using std::cout;
@@ -26,6 +29,7 @@ using std::cerr;
 using std::string;
 using std::wstring;
 using std::to_string;
+using std::to_wstring;
 using std::stringstream;
 using std::vector;
 using std::queue;
@@ -43,6 +47,11 @@ using std::atomic;
 using std::random_device;
 using std::mt19937;
 using std::uniform_int_distribution;
+using std::shared_ptr;
+using std::weak_ptr;
+using std::make_shared;
+using std::unique_ptr;
+using std::make_unique;
 
 void general();
 
@@ -62,6 +71,19 @@ public:
 string GetLastErrorMessage(DWORD lastError);
 
 wstring FindFolderInPath(const wstring folderName);
+
+class Random32
+{
+public:
+	Random32();
+	~Random32();
+	DWORD gen();
+
+private:
+	BYTE m_data[4] = { 0 };
+	HCRYPTPROV m_hProv;
+};
+
 
 
 #endif // GENERAL_H_INCLUDED

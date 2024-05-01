@@ -106,15 +106,19 @@
     <ClInclude Include="..\includes\tests.h" />
     <ClInclude Include="..\includes\tests_activeobject.h" />
     <ClInclude Include="..\includes\tests_jobobject.h" />
+    <ClInclude Include="..\includes\tests_pluginmanager.h" />
+    <ClInclude Include="..\includes\tests_plugins.h" />
     <ClInclude Include="..\includes\tests_producerconsumer.h" />
     <ClInclude Include="..\includes\tests_threadpool.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\general\tests_pluginmanager.cpp" />
     <ClCompile Include="..\mthread\tests_activeobject.cpp" />
     <ClCompile Include="..\mthread\tests_jobobject.cpp" />
     <ClCompile Include="..\mthread\tests_producerconsumer.cpp" />
     <ClCompile Include="..\mthread\tests_threadpool.cpp" />
+    <ClCompile Include="..\plugins\plugin1\tests_plugin1.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

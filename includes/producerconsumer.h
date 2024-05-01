@@ -260,4 +260,125 @@ namespace ProducerConsumer::TaskQueue
 		cv			m_cv;
 	};
 }
+
+namespace ProducerConsumer::Windows1
+{
+	class Queue
+	{
+	public:
+		Queue()
+		{
+			InitializeCriticalSection(&m_cs);
+		}
+		~Queue()
+		{
+			DeleteCriticalSection(&m_cs);
+		}
+		size_t size()
+		{
+			size_t s = 0;
+			EnterCriticalSection(&m_cs);
+			s = m_queue.size();
+			LeaveCriticalSection(&m_cs);
+			return s;
+		}
+		BOOL empty()
+		{
+			BOOL e = FALSE;
+			EnterCriticalSection(&m_cs);
+			e = m_queue.empty();
+			LeaveCriticalSection(&m_cs);
+			return e;
+		}
+
+		void push(DWORD const& val)
+		{
+			EnterCriticalSection(&m_cs);
+			m_queue.push(val);
+			LeaveCriticalSection(&m_cs);
+		}
+		DWORD pop()
+		{
+			DWORD ret = 0;
+			EnterCriticalSection(&m_cs);
+			if (!m_queue.empty())
+			{
+				ret = m_queue.front();
+				m_queue.pop();
+			}
+			LeaveCriticalSection(&m_cs);
+			return ret;
+		}
+
+	private:
+		CRITICAL_SECTION m_cs;
+		queue<DWORD> m_queue;
+	};
+
+	class ThreadRunner
+	{
+	public:
+		ThreadRunner()
+		{
+			m_hThread = CreateThread(NULL, 0, &ThreadRunner::BootThreadFunc, this, 0, NULL);
+			if (!m_hThread)
+			{
+				auto lastError = GetLastError();
+				cerr << "Creating thread failed: (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+			}
+		}
+		virtual ~ThreadRunner()
+		{
+			if (m_hThread)
+			{
+				WaitForSingleObject(m_hThread, INFINITE);
+				CloseHandle(m_hThread);
+			}
+		}
+	private:
+		static DWORD WINAPI BootThreadFunc(LPVOID lpParam)
+		{
+			ThreadRunner* pDerived = static_cast<ThreadRunner*>(lpParam);
+			pDerived->ThreadFunc();
+			return 0;
+		}
+		virtual void ThreadFunc() {}
+		virtual void stop() {}
+
+		HANDLE m_hThread;
+	};
+
+	class Producer : public ThreadRunner
+	{
+	public:
+		Producer(shared_ptr<Queue> q)
+			: m_queue(q){}
+		~Producer()
+		{
+			m_stop = true; // Let the thread knows terminating.
+		}
+	private:
+		shared_ptr<Queue> m_queue; // Note: the Queue needs to be initialized first.
+		BOOL m_stop = FALSE;
+		Random32 m_random;
+		void ThreadFunc() override;
+	};
+
+	class Consumer : public ThreadRunner
+	{
+	public:
+		Consumer(shared_ptr<Queue> q)
+			: m_queue(q){}
+		~Consumer()
+		{
+			m_stop = true; // Let the thread knows terminating.
+		}
+	private:
+		shared_ptr<Queue> m_queue; // Note: the Queue needs to be initialized first.
+		BOOL m_stop = FALSE;
+		void ThreadFunc() override;
+	};
+}
+
+
 #endif // PRODUCERCONSUMER_H_INCLUDED

@@ -100,3 +100,18 @@ namespace ProducerConsumer::TaskQueue
 	}
 }
 
+namespace ProducerConsumer::Windows1
+{
+	int Tests::run()
+	{
+		shared_ptr<Queue> q = make_shared<Queue>();
+		Producer producer(q);
+		Consumer consumer(q);
+
+		sleep_for(milliseconds(3000));
+		return 0;
+	}
+}
+
+
+

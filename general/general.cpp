@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "framework.h"
-#include "Windows.h"
-#include "rpc.h"
+#include <Windows.h>
+#include <rpc.h>
 
 #include <iostream>
 #include <sstream>
@@ -69,3 +69,43 @@ wstring FindFolderInPath(const wstring folderName)
 	cout << "The specified folder was not found.\n";
 	return L"";
 }
+
+
+Random32::Random32()
+{
+	if (!CryptAcquireContext(&m_hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+	{
+		auto lastError = GetLastError();
+		cerr << "CryptAcquireContext() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+	}
+
+}
+Random32::~Random32()
+{
+	if (m_hProv)
+	{
+		if (!CryptReleaseContext(m_hProv, 0))
+		{
+			auto lastError = GetLastError();
+			cerr << "CryptReleaseContext() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		}
+	}
+}
+DWORD Random32::gen()
+{
+	DWORD dwRet = 0;
+	if (m_hProv)
+	{
+		if (!CryptGenRandom(m_hProv, sizeof(DWORD), m_data))
+		{
+			auto lastError = GetLastError();
+			cerr << "CryptGenRandom() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		}
+		else
+		{
+			CopyMemory((PVOID)&dwRet, (PVOID)m_data, sizeof(DWORD));
+		}
+	}
+	return dwRet;
+}
+

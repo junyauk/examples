@@ -55,5 +55,8 @@
     <ClCompile Include="hackerrank.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="plugin.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

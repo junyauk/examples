@@ -106,12 +106,15 @@ TEST(MultiThread, ProducerConsumerTaskQueue)
 	EXPECT_EQ(ret, 0);
 }
 
-#if 0
-TEST(MultiThread, ProducerConsumer)
+TEST(MultiThread, ProducerConsumerWindows1)
 {
-	EXPECT_NO_THROW(Run_ProducerConsumer());
+	using namespace ProducerConsumer::Windows1;
+	Tests tests;
+	int ret = 0;
+	EXPECT_NO_THROW(ret = tests.run());
+	EXPECT_EQ(ret, 0);
 }
-#endif
+
 TEST(MultiThread, ReadLockWriteLock)
 {
 	EXPECT_NO_THROW(Run_ReadLockWriteLock());
