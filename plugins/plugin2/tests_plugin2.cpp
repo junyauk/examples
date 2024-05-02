@@ -4,14 +4,14 @@
 #include "plugin.h"
 #include "tests_plugins.h"
 
-namespace Plugin::LoadingPlugin1Tests
+namespace Plugin::LoadingPlugin2Tests
 {
 	int Tests::run()
 	{
-		auto hPlugin = LoadLibrary(TEXT("plugin1.dll"));
+		auto hPlugin = LoadLibrary(TEXT("plugin2.dll"));
 		if (hPlugin != NULL)
 		{
-			auto func = reinterpret_cast<IPlugin *(*)()>(GetProcAddress(hPlugin, "createPlugin"));
+			auto func = reinterpret_cast<IPlugin * (*)()>(GetProcAddress(hPlugin, "createPlugin"));
 			if (func != NULL)
 			{
 				IPlugin* rawPtr = func(); // It returns a raw pointer created by new

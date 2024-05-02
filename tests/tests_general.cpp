@@ -590,11 +590,21 @@ TEST(General, HackerrankBitArray)
 
 TEST(Plugin, LoadingPluginTests)
 {
-	using namespace Plugin::LoadingPluginTests;
-	Tests tests;
-	int ret = 0;
-	EXPECT_NO_THROW(ret = tests.run());
-	EXPECT_EQ(ret, 0);
+	{
+		using namespace Plugin::LoadingPlugin1Tests;
+		Tests tests;
+		int ret = 0;
+		EXPECT_NO_THROW(ret = tests.run());
+		EXPECT_EQ(ret, 0);
+	}
+
+	{
+		using namespace Plugin::LoadingPlugin2Tests;
+		Tests tests;
+		int ret = 0;
+		EXPECT_NO_THROW(ret = tests.run());
+		EXPECT_EQ(ret, 0);
+	}
 }
 
 TEST(Plugin, PluginManager)

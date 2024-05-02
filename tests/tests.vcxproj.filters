@@ -26,6 +26,9 @@
     <ClCompile Include="..\general\tests_pluginmanager.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\plugins\plugin2\tests_plugin2.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

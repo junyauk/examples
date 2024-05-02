@@ -3,7 +3,16 @@
 #define TESTS_PLUGINS_HINCLUDED
 #include "tests.h"
 
-namespace Plugin::LoadingPluginTests
+namespace Plugin::LoadingPlugin1Tests
+{
+	class Tests : public ITest
+	{
+	public:
+		int run();
+	};
+}
+
+namespace Plugin::LoadingPlugin2Tests
 {
 	class Tests : public ITest
 	{

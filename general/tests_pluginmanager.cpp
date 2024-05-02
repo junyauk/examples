@@ -13,8 +13,6 @@ namespace Plugin
 		string prefix = "plugin";
 		PluginManager pluginManager(prefix);
 		pluginManager.execute();
-
-
 		return 0;
 	}
 }
