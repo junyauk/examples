@@ -9,16 +9,27 @@ using namespace Plugin;
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
+	HANDLE hMappedFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, L"LOCAL//MemoryMappedFile");
+	if (!hMappedFile)
 	{
-		cerr << "usage: program.exe <plugin_prefix>\n";
+		auto lastError = GetLastError();
+		cerr << "OpenFileMapping() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
 		return 1;
 	}
 
-	string prefix{ argv[1] };
-	PluginManager pluginManager(prefix);
+	LPVOID pData = MapViewOfFile(hMappedFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(int));
+	if (!pData)
+	{
+		auto lastError = GetLastError();
+		cerr << "MapViewOfFile() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		return 1;
+	}
 
-	pluginManager.execute();
+	int* ptr = static_cast<int*>(pData);
+	*ptr = 123;
+
+	UnmapViewOfFile(pData);
+	CloseHandle(hMappedFile);
 
 	return 0;
 }

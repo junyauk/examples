@@ -70,6 +70,19 @@ wstring FindFolderInPath(const wstring folderName)
 	return L"";
 }
 
+wstring GetRunningPath()
+{
+	WCHAR path[MAX_PATH];
+	if (!GetModuleFileName(nullptr, path, MAX_PATH))
+	{
+		DWORD lastError = GetLastError();
+		cerr << "Error GetModuleFileName failed: (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		return TEXT("");
+	}
+	wstring fullpath{ path };
+	auto pos = fullpath.find_last_of(TEXT('\\'));
+	return fullpath.substr(0, pos);
+}
 
 Random32::Random32()
 {

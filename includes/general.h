@@ -72,6 +72,8 @@ string GetLastErrorMessage(DWORD lastError);
 
 wstring FindFolderInPath(const wstring folderName);
 
+wstring GetRunningPath();
+
 class Random32
 {
 public:

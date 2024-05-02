@@ -616,3 +616,66 @@ TEST(Plugin, PluginManager)
 	EXPECT_EQ(ret, 0);
 }
 
+TEST(MultiProcess, MemoryMappedFile)
+{
+	HANDLE hMapFile = CreateFileMapping(
+		INVALID_HANDLE_VALUE,
+		NULL,
+		PAGE_READWRITE,
+		0,
+		sizeof(int),
+		L"LOCAL//MemoryMappedFile");
+	if (!hMapFile)
+	{
+		auto lastError = GetLastError();
+		cerr << "CreateFileMapping() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		return;
+	}
+
+	LPVOID pData = MapViewOfFile(
+		hMapFile,
+		FILE_MAP_ALL_ACCESS,
+		0,
+		0,
+		sizeof(int));
+	if (!pData)
+	{
+		auto lastError = GetLastError();
+		cerr << "MapViewOfFile() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		CloseHandle(hMapFile);
+		return;
+	}
+	int* pValue = static_cast<int*>(pData);
+	*pValue = 3;
+
+	wstring path = GetRunningPath() + TEXT("\\") + TEXT("ProcessA.exe");
+
+	PROCESS_INFORMATION pi;
+	STARTUPINFO si = { sizeof(si) };
+	if (!CreateProcess(
+		path.c_str(),
+		NULL,
+		NULL,
+		NULL,
+		FALSE,
+		CREATE_SUSPENDED, // for debugging
+		NULL,
+		NULL,
+		&si,
+		&pi))
+	{
+		auto lastError = GetLastError();
+		cerr << "MapViewOfFile() failed. (" << lastError << ") " << GetLastErrorMessage(lastError) << endl;
+		UnmapViewOfFile(pData);
+		CloseHandle(hMapFile);
+		return;
+	}
+	ResumeThread(pi.hThread); // for debugging. Attach ProcessA before running this.
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	EXPECT_EQ(*pValue, 123);
+
+	UnmapViewOfFile(pData);
+	CloseHandle(hMapFile);
+}
