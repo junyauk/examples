@@ -106,6 +106,7 @@
     <ClInclude Include="..\includes\tests.h" />
     <ClInclude Include="..\includes\tests_activeobject.h" />
     <ClInclude Include="..\includes\tests_jobobject.h" />
+    <ClInclude Include="..\includes\tests_mprocess.h" />
     <ClInclude Include="..\includes\tests_pluginmanager.h" />
     <ClInclude Include="..\includes\tests_plugins.h" />
     <ClInclude Include="..\includes\tests_producerconsumer.h" />
@@ -114,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\general\tests_pluginmanager.cpp" />
+    <ClCompile Include="..\mprocess\tests_mprocess.cpp" />
     <ClCompile Include="..\mthread\tests_activeobject.cpp" />
     <ClCompile Include="..\mthread\tests_jobobject.cpp" />
     <ClCompile Include="..\mthread\tests_producerconsumer.cpp" />
@@ -139,6 +141,9 @@
     </ProjectReference>
     <ProjectReference Include="..\general\general.vcxproj">
       <Project>{f00b2121-a420-4210-aefa-0d21ee45391d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\mprocess\mprocess.vcxproj">
+      <Project>{89d6aad2-7605-44dd-955d-8851b19ff474}</Project>
     </ProjectReference>
     <ProjectReference Include="..\mthread\mthread.vcxproj">
       <Project>{3d139cf0-0dd9-473a-ae20-c6fec197f6ad}</Project>

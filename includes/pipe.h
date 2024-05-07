@@ -5,4 +5,11 @@
 #include "general.h"
 
 
+// For test
+struct PipeData
+{
+	DWORD dwVal;
+	char szMsg[256];
+};
+
 #endif // PIPE_H_INCLUDED
