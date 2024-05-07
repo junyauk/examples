@@ -65,5 +65,13 @@
     <Filter Include="sources">
       <UniqueIdentifier>{20249b7d-bf98-4bfc-aeae-1ab22b85f54a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{31b45349-f9b1-4e3c-b204-b223e1db779c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\dijeh.bmp">
+      <Filter>resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

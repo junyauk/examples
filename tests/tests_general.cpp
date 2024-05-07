@@ -616,15 +616,106 @@ TEST(Plugin, PluginManager)
 	EXPECT_EQ(ret, 0);
 }
 
+TEST(General, BitmapFileClass)
+{
+	auto dbg = GetTestFolderPath();
+	{// Create BitmapFile instance from path
+		BitmapFile bitmapFile(GetTestFolderPath() + TEXT("Resources") + TEXT("\\") + TEXT("dijeh.bmp"));
+		EXPECT_EQ(bitmapFile.fileSize(), 589674);
+		EXPECT_EQ(bitmapFile.width(), 422);
+		EXPECT_EQ(bitmapFile.height(), 465);
+		EXPECT_EQ(bitmapFile.bitsCount(), 24);
+		EXPECT_EQ(bitmapFile.scanlineSize(), 1268);
+		EXPECT_EQ(bitmapFile.fileSize(), 589674);
+		EXPECT_EQ(bitmapFile.imageSize(), 589620);
+		string expected = "aa629fbf81affc709e46dd2c69c2b3464e3f6e7adf6f7eb179094319d7e6550a";
+		EXPECT_STREQ(expected.c_str(), bitmapFile.hash().c_str());
+	}
+	{ // Create BitmapFile instance as accessor
+		wstring wsfilePath = GetTestFolderPath() + TEXT("Resources") + TEXT("\\") + TEXT("dijeh.bmp");
+		HANDLE hFile = CreateFile(
+			wsfilePath.c_str(),
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			auto lastError = GetLastError();
+			wcerr << TEXT("Failed to open. (") << lastError << TEXT(") ") << GetLastErrorMessageW(lastError) << endl;
+			return;
+		}
+
+		// Get the file size
+		DWORD dwSize = GetFileSize(hFile, NULL);
+		if (dwSize == INVALID_FILE_SIZE)
+		{
+			auto lastError = GetLastError();
+			wcerr << TEXT("Failed to get the file size. (") << lastError << TEXT(") ") << GetLastErrorMessageW(lastError) << endl;
+			CloseHandle(hFile);
+			return;
+		}
+		shared_ptr<UCHAR[]> pFile = make_shared<UCHAR[]>(dwSize);
+
+		// Read the file
+		DWORD dwRead;
+		if (!ReadFile(hFile, pFile.get(), dwSize, &dwRead, NULL) || (dwSize != dwRead))
+		{
+			auto lastError = GetLastError();
+			wcerr << TEXT("Failed to read the file. (") << lastError << TEXT(") ") << GetLastErrorMessageW(lastError) << endl;
+			CloseHandle(hFile);
+			return;
+		}
+		CloseHandle(hFile);
+
+		BitmapFile bitmapFile(pFile.get());
+		EXPECT_EQ(bitmapFile.fileSize(), 589674);
+		EXPECT_EQ(bitmapFile.width(), 422);
+		EXPECT_EQ(bitmapFile.height(), 465);
+		EXPECT_EQ(bitmapFile.bitsCount(), 24);
+		EXPECT_EQ(bitmapFile.scanlineSize(), 1268);
+		EXPECT_EQ(bitmapFile.fileSize(), 589674);
+		EXPECT_EQ(bitmapFile.imageSize(), 589620);
+		string expected = "aa629fbf81affc709e46dd2c69c2b3464e3f6e7adf6f7eb179094319d7e6550a";
+		EXPECT_STREQ(expected.c_str(), bitmapFile.hash().c_str());
+
+		auto pixels = 30;
+		auto colour = bitmapFile.bitsCount() / 8; // will be 1 or 3;
+		auto x = 5 * colour;
+		auto y = bitmapFile.height();
+
+		vector<UCHAR> scanline = bitmapFile.getScanline(bitmapFile.height());
+
+		for (auto pixel = 0; pixel < pixels; ++pixel)
+		{
+			for (auto c = 0; c < colour; ++c)
+			{
+				scanline.at(x + c) = 0x00;
+			}
+			x += colour; // x pos
+		}
+		bitmapFile.setScanline(y, scanline);
+		string newExpected = "b8e325daea4a99f870f7c24f74eb0495a65e7f62a78649ef8948ecf7d44595ad";
+		EXPECT_STREQ(newExpected.c_str(), bitmapFile.hash().c_str());
+	}
+}
+
+
+
 TEST(MultiProcess, MemoryMappedFile)
 {
+	wstring wsfilePath = GetTestFolderPath() + TEXT("Resources") + TEXT("\\") + TEXT("dijeh.bmp");
+	BitmapFile bitmapFile(wsfilePath);
+
 	HANDLE hMapFile = CreateFileMapping(
 		INVALID_HANDLE_VALUE,
 		NULL,
 		PAGE_READWRITE,
 		0,
-		sizeof(int),
-		L"LOCAL//MemoryMappedFile");
+		bitmapFile.fileSize(),
+		TEXT("LOCAL//MemoryMappedFile"));
 	if (!hMapFile)
 	{
 		auto lastError = GetLastError();
@@ -637,7 +728,7 @@ TEST(MultiProcess, MemoryMappedFile)
 		FILE_MAP_ALL_ACCESS,
 		0,
 		0,
-		sizeof(int));
+		bitmapFile.fileSize());
 	if (!pData)
 	{
 		auto lastError = GetLastError();
@@ -645,10 +736,16 @@ TEST(MultiProcess, MemoryMappedFile)
 		CloseHandle(hMapFile);
 		return;
 	}
-	int* pValue = static_cast<int*>(pData);
-	*pValue = 3;
+	
+	// Load the bitmap file
+	CopyMemory(pData, bitmapFile.bitmapFileHeader(), bitmapFile.fileSize());
+	BitmapFile mappedBitmap(pData);
+	string expected = "aa629fbf81affc709e46dd2c69c2b3464e3f6e7adf6f7eb179094319d7e6550a";
+	EXPECT_STREQ(expected.c_str(), mappedBitmap.hash().c_str());
 
-	wstring path = GetRunningPath() + TEXT("\\") + TEXT("ProcessA.exe");
+	wstring path = GetRunningPath()
+		+ TEXT("\\")
+		+ TEXT("ProcessA.exe");
 
 	PROCESS_INFORMATION pi;
 	STARTUPINFO si = { sizeof(si) };
@@ -674,7 +771,10 @@ TEST(MultiProcess, MemoryMappedFile)
 
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
-	EXPECT_EQ(*pValue, 123);
+	// The bitmap image has been overwritten. The hash must be different from before.
+	string newExpected = "b8e325daea4a99f870f7c24f74eb0495a65e7f62a78649ef8948ecf7d44595ad";
+	string newActual = mappedBitmap.hash();
+	EXPECT_STREQ(newExpected.c_str(), newActual.c_str());
 
 	UnmapViewOfFile(pData);
 	CloseHandle(hMapFile);

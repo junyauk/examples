@@ -57,13 +57,13 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes;C:\Program Files\OpenSSL-Win64\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib;C:\Program Files\OpenSSL-Win64\lib\VC\x64\MT</AdditionalLibraryDirectories>
       <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,13 +146,13 @@
     <ProjectReference Include="..\sthread\sthread.vcxproj">
       <Project>{71c7f06c-6a83-4b38-a653-e775dfcd6ddc}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\zenn\zenn.vcxproj">
-      <Project>{aa81771e-08c1-48a4-b99b-a860b51ae0ba}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="emptyprocess.bat" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\dijeh.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

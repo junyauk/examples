@@ -1,5 +1,5 @@
 #include "pch.h"
-
+#include "general.h"
 #include "hackerrank.h"
 
 namespace Hackerrank::BitArray

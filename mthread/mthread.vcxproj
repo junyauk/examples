@@ -118,7 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes;C:\Program Files\OpenSSL-Win64\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -126,6 +126,9 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MT</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -163,6 +166,7 @@
     <ClInclude Include="..\includes\leaderfollower.h" />
     <ClInclude Include="..\includes\monitorobject.h" />
     <ClInclude Include="..\includes\multithreadsum.h" />
+    <ClInclude Include="..\includes\pipe.h" />
     <ClInclude Include="..\includes\producerconsumer.h" />
     <ClInclude Include="..\includes\reactor.h" />
     <ClInclude Include="..\includes\readerwriter.h" />
@@ -197,6 +201,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="pipe.cpp" />
     <ClCompile Include="producerconsumer.cpp" />
     <ClCompile Include="reactor.cpp" />
     <ClCompile Include="readerwriter.cpp" />
